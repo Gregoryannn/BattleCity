@@ -4,18 +4,17 @@
 
 <head>
     <title>Jasmine Spec Runner</title>
-
     <link rel="shortcut icon" type="image/png" href="lib/jasmine-1.2.0/jasmine_favicon.png">
     <link rel="stylesheet" type="text/css" href="lib/jasmine-1.2.0/jasmine.css">
     <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine.js"></script>
     <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine-html.js"></script>
-
     <!-- spec files -->
     <script type="text/javascript" src="spec/TankSpec.js"></script>
     <script type="text/javascript" src="spec/PointSpec.js"></script>
     <script type="text/javascript" src="spec/RectSpec.js"></script>
     <script type="text/javascript" src="spec/CollisionDetectorSpec.js"></script>
     <script type="text/javascript" src="spec/EventManagerSpec.js"></script>
+    <script type="text/javascript" src="spec/TankControllerSpec.js"></script>
 
     <!-- source files -->
     <script type="text/javascript" src="src/Utils.js"></script>
@@ -27,23 +26,19 @@
     <script type="text/javascript" src="src/Wall.js"></script>
     <script type="text/javascript" src="src/CollisionDetector.js"></script>
     <script type="text/javascript" src="src/EventManager.js"></script>
-
+    <script type="text/javascript" src="src/TankController.js"></script>
+    <script type="text/javascript" src="src/Keyboard.js"></script>
 
     <script type="text/javascript">
         (function() {
             var jasmineEnv = jasmine.getEnv();
             jasmineEnv.updateInterval = 1000;
-
             var htmlReporter = new jasmine.HtmlReporter();
-
             jasmineEnv.addReporter(htmlReporter);
-
             jasmineEnv.specFilter = function(spec) {
                 return htmlReporter.specFilter(spec);
             };
-
             var currentWindowOnload = window.onload;
-
             window.onload = function() {
                 if (currentWindowOnload) {
                     currentWindowOnload();
@@ -54,11 +49,14 @@
             function execJasmine() {
                 jasmineEnv.execute();
             }
-
         })();
     </script>
-
 </head>
+
+<body>
+</body>
+
+</html>
 
 <body>
 </body>
