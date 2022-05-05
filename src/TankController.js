@@ -11,19 +11,26 @@ TankController.prototype.notify = function(event) {
 };
 
 TankController.prototype._keyDown = function(key) {
-    this._tank.setSpeed(Tank.SPEED);
-
     if (key == Keyboard.Key.LEFT) {
         this._tank.setDirection(Tank.Direction.LEFT);
+        this._tank.toNormalSpeed();
     } else if (key == Keyboard.Key.RIGHT) {
         this._tank.setDirection(Tank.Direction.RIGHT);
+        this._tank.toNormalSpeed();
     } else if (key == Keyboard.Key.UP) {
         this._tank.setDirection(Tank.Direction.UP);
+        this._tank.toNormalSpeed();
     } else if (key == Keyboard.Key.DOWN) {
         this._tank.setDirection(Tank.Direction.DOWN);
+        this._tank.toNormalSpeed();
     }
 };
 
 TankController.prototype._keyUp = function(key) {
-    this._tank.setSpeed(0);
+    if (this._tank.getDirection() == Tank.Direction.LEFT && key == Keyboard.Key.LEFT ||
+        this._tank.getDirection() == Tank.Direction.RIGHT && key == Keyboard.Key.RIGHT ||
+        this._tank.getDirection() == Tank.Direction.UP && key == Keyboard.Key.UP ||
+        this._tank.getDirection() == Tank.Direction.DOWN && key == Keyboard.Key.DOWN) {
+        this._tank.stop();
+    }
 };
