@@ -15,8 +15,12 @@ describe("Tank", function() {
             expect(tank.getSpeed()).toEqual(0);
         });
 
+        it("normal speed should be 0", function() {
+            expect(tank.getNormalSpeed()).toEqual(0);
+        });
+
         it("direction should be Right", function() {
-            expect(tank.getDirection()).toEqual(Tank.Direction.RIGHT);
+            expect(tank.getDirection()).toEqual(Sprite.Direction.RIGHT);
         });
     });
 
@@ -27,7 +31,7 @@ describe("Tank", function() {
     });
 
     it("#setDirection", function() {
-        var DIRECTION = Tank.Direction.LEFT;
+        var DIRECTION = Sprite.Direction.LEFT;
         tank.setDirection(DIRECTION);
         expect(tank.getDirection()).toEqual(DIRECTION);
     });
@@ -38,23 +42,21 @@ describe("Tank", function() {
             SPEED = 1;
 
         it("right", function() {
-            checkDirection(Tank.Direction.RIGHT, new Point(INIT_X + SPEED, INIT_Y))
+            checkDirection(Sprite.Direction.RIGHT, new Point(INIT_X + SPEED, INIT_Y))
         });
-
         it("left", function() {
-            checkDirection(Tank.Direction.LEFT, new Point(INIT_X - SPEED, INIT_Y))
+            checkDirection(Sprite.Direction.LEFT, new Point(INIT_X - SPEED, INIT_Y))
         });
 
         it("up", function() {
-            checkDirection(Tank.Direction.UP, new Point(INIT_X, INIT_Y - SPEED))
+            checkDirection(Sprite.Direction.UP, new Point(INIT_X, INIT_Y - SPEED))
         });
 
         it("down", function() {
-            checkDirection(Tank.Direction.DOWN, new Point(INIT_X, INIT_Y + SPEED))
+            checkDirection(Sprite.Direction.DOWN, new Point(INIT_X, INIT_Y + SPEED))
         });
 
         function checkDirection(direction, finalPosition) {
-            tank.setPosition(new Position(INIT_X, INIT_Y));
             tank.setPosition(INIT_X, INIT_Y);
             tank.setSpeed(SPEED);
             tank.setDirection(direction);
@@ -69,6 +71,15 @@ describe("Tank", function() {
         expect(eventManager.fireEvent).toHaveBeenCalledWith({
             'name': Sprite.Event.MOVED,
             'sprite': tank
+        });
+    });
+
+    it('#shoot', function() {
+        spyOn(eventManager, 'fireEvent');
+        tank.shoot();
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({
+            'name': Tank.Event.SHOOT,
+            'tank': tank
         });
     });
 });
