@@ -1,48 +1,59 @@
 describe("TankController", function() {
+    describe("should move the tank if the direction key is pressed", function() {
+        var SPEED = 4;
 
-    describe("KEY_DOWN", function() {
-
-        it("LEFT", function() {
-            checkKey(Tank.Direction.RIGHT, Keyboard.Key.LEFT, Tank.Direction.LEFT);
+        it("LEFT - move left", function() {
+            checkKeyDown(Tank.Direction.RIGHT, Keyboard.Key.LEFT, SPEED, Tank.Direction.LEFT);
         });
 
-        it("RIGHT", function() {
-            checkKey(Tank.Direction.LEFT, Keyboard.Key.RIGHT, Tank.Direction.RIGHT);
+        it("RIGHT - move right", function() {
+            checkKeyDown(Tank.Direction.LEFT, Keyboard.Key.RIGHT, SPEED, Tank.Direction.RIGHT);
         });
 
-        it("UP", function() {
-            checkKey(Tank.Direction.LEFT, Keyboard.Key.UP, Tank.Direction.UP);
+        it("UP - move up", function() {
+            checkKeyDown(Tank.Direction.LEFT, Keyboard.Key.UP, SPEED, Tank.Direction.UP);
         });
 
-        it("DOWN", function() {
-            checkKey(Tank.Direction.LEFT, Keyboard.Key.DOWN, Tank.Direction.DOWN);
+        it("DOWN - move down", function() {
+            checkKeyDown(Tank.Direction.LEFT, Keyboard.Key.DOWN, SPEED, Tank.Direction.DOWN);
+        });
+        it("SPACE - don't move", function() {
+            checkKeyDown(Tank.Direction.LEFT, Keyboard.Key.SPACE, 0, Tank.Direction.LEFT);
         });
 
-        function checkKey(initialDirection, pressedKey, expectedDirection) {
-
+        function checkKeyDown(initialDirection, pressedKey, expectedSpeed, expectedDirection) {
             var eventManager = new EventManager();
             var tank = new Tank(eventManager);
+            tank.setNormalSpeed(SPEED);
             tank.setDirection(initialDirection);
             var tankController = new TankController(tank);
-            tank.setNormalSpeed(SPEED);
-
             tankController.notify({ name: Keyboard.Event.KEY_DOWN, key: pressedKey });
-
-            expect(tank.getSpeed()).toEqual(SPEED);
+            expect(tank.getSpeed()).toEqual(expectedSpeed);
             expect(tank.getDirection()).toEqual(expectedDirection);
         }
     });
 
     describe("KEY_UP", function() {
-        it("should stop the tank", function() {
+        var SPEED = 4;
+
+        it("should stop the tank when released key is the current direction key", function() {
+            checkKeyUp(Keyboard.Key.RIGHT, 0);
+        });
+
+        it("shouldn't stop the tank when released key is not the current direction key", function() {
+            checkKeyUp(Keyboard.Key.LEFT, SPEED);
+        });
+
+        function checkKeyUp(key, expectedSpeed) {
             var eventManager = new EventManager();
             var tank = new Tank(eventManager);
-            tank.setSpeed(4);
+            tank.setSpeed(SPEED);
+            tank.setDirection(Tank.Direction.RIGHT);
             var tankController = new TankController(tank);
 
-            tankController.notify({ name: Keyboard.Event.KEY_UP, key: Keyboard.Key.RIGHT });
+            tankController.notify({ name: Keyboard.Event.KEY_UP, key: key });
 
-            expect(tank.getSpeed()).toEqual(0);
-        });
+            expect(tank.getSpeed()).toEqual(expectedSpeed);
+        }
     });
 });
