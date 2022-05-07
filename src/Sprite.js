@@ -15,6 +15,8 @@ Sprite.Direction = {
 Sprite.Event = {};
 Sprite.Event.MOVED = 'Sprite.Event.MOVED';
 Sprite.Event.CREATED = 'Sprite.Event.CREATED';
+Sprite.Event.DESTROYED = 'Sprite.Event.DESTROYED';
+
 Sprite.prototype.getDirection = function() {
     return this._direction;
 };
