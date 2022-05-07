@@ -1,29 +1,13 @@
 function Tank(eventManager) {
-    Sprite.call(this);
+    Sprite.call(this, eventManager);
 
-    this._eventManager = eventManager;
-    this._speed = 0;
     this._normalSpeed = 0;
-    this._direction = Tank.Direction.RIGHT;
+    this._bulletSize = 1;
+    this._bulletSpeed = 1;
 }
 Tank.subclass(Sprite);
-Tank.Direction = {
-    RIGHT: 'RIGHT',
-    LEFT: 'LEFT',
-    UP: 'UP',
-    DOWN: 'DOWN',
-};
-
 Tank.Event = {};
 Tank.Event.SHOOT = 'Tank.Event.SHOOT';
-
-Tank.prototype.getSpeed = function() {
-    return this._speed;
-};
-
-Tank.prototype.setSpeed = function(speed) {
-    this._speed = speed;
-};
 Tank.prototype.getNormalSpeed = function() {
     return this._normalSpeed;
 };
@@ -33,48 +17,31 @@ Tank.prototype.setNormalSpeed = function(speed) {
 Tank.prototype.toNormalSpeed = function() {
     this._speed = this._normalSpeed;
 };
-Tank.prototype.stop = function() {
-    this._speed = 0;
+Tank.prototype.setBulletSize = function(size) {
+    this._bulletSize = size;
 };
 
-Tank.prototype.getDirection = function() {
-    return this._direction;
+Tank.prototype.getBulletSize = function() {
+    return this._bulletSize;
 };
 
-Tank.prototype.setDirection = function(direction) {
-    this._direction = direction;
+Tank.prototype.setBulletSpeed = function(speed) {
+    this._bulletSpeed = speed;
 };
-
-Tank.prototype.move = function() {
-    this._x = this._getNewX();
-    this._y = this._getNewY();
-    this._eventManager.fireEvent({ 'name': Sprite.Event.MOVED, 'sprite': this });
+Tank.prototype.getBulletSpeed = function() {
+    return this._bulletSpeed;
 };
 
 Tank.prototype.shoot = function() {
+    if (this._bulletShot) {
+        return;
+    }
+    this._bulletShot = true;
     this._eventManager.fireEvent({ 'name': Tank.Event.SHOOT, 'tank': this });
 };
 
-Tank.prototype._getNewX = function() {
-    var result = this._x;
-
-    if (this._direction == Tank.Direction.RIGHT) {
-        result += this._speed;
-    } else if (this._direction == Tank.Direction.LEFT) {
-        result -= this._speed;
+Tank.prototype.notify = function(event) {
+    if (event.name == 'Bullet.Event.DESTROYED') {
+        this._bulletShot = false;
     }
-
-    return result;
-};
-
-Tank.prototype._getNewY = function() {
-    var result = this._y;
-
-    if (this._direction == Tank.Direction.UP) {
-        result -= this._speed;
-    } else if (this._direction == Tank.Direction.DOWN) {
-        result += this._speed;
-    }
-
-    return result;
 };
