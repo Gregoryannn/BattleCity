@@ -24,7 +24,6 @@ describe("BulletFactory", function() {
             spyOn(eventManager, 'fireEvent');
 
             var factory = new BulletFactory(eventManager);
-
             var tank = new Tank(eventManager);
             tank.setPosition(tankPosition);
             tank.setDimensions(32, 32);
@@ -32,7 +31,7 @@ describe("BulletFactory", function() {
             tank.setBulletSize(BULLET_SIZE);
             tank.setBulletSpeed(BULLET_SPEED);
 
-            var bullet = new Bullet();
+            var bullet = new Bullet(eventManager, tank);
             bullet.setPosition(bulletPosition);
             bullet.setDimensions(BULLET_SIZE, BULLET_SIZE);
             bullet.setDirection(direction);

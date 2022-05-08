@@ -1,7 +1,6 @@
 function BulletFactory(eventManager) {
     this._eventManager = eventManager;
 }
-
 BulletFactory.prototype.notify = function(event) {
     if (event.name == Tank.Event.SHOOT) {
         this._createBullet(event.tank);
@@ -9,7 +8,7 @@ BulletFactory.prototype.notify = function(event) {
 };
 
 BulletFactory.prototype._createBullet = function(tank) {
-    var bullet = new Bullet();
+    var bullet = new Bullet(this._eventManager, tank);
     bullet.setPosition(this._getBulletPosition(tank));
     bullet.setDimensions(tank.getBulletSize(), tank.getBulletSize());
     bullet.setDirection(tank.getDirection());
@@ -17,7 +16,6 @@ BulletFactory.prototype._createBullet = function(tank) {
 
     this._eventManager.fireEvent({ 'name': Sprite.Event.CREATED, 'sprite': bullet });
 };
-
 BulletFactory.prototype._getBulletPosition = function(tank) {
     var x, y;
     var direction = tank.getDirection();

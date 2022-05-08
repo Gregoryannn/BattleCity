@@ -43,7 +43,7 @@ Tank.prototype.shoot = function() {
 };
 
 Tank.prototype.notify = function(event) {
-    if (event.name == Bullet.Event.DESTROYED) {
+    if (event.name == Bullet.Event.DESTROYED && event.tank == this) {
         this._bulletShot = false;
     }
 };
