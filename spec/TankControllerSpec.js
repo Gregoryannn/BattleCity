@@ -1,4 +1,12 @@
 describe("TankController", function() {
+    it("should subscribe", function() {
+        var eventManager = new EventManager();
+        spyOn(eventManager, 'addSubscriber');
+        var tank = new Tank(eventManager);
+        var tankController = new TankController(eventManager, tank);
+        expect(eventManager.addSubscriber).toHaveBeenCalledWith(tankController, [Keyboard.Event.KEY_PRESSED, Keyboard.Event.KEY_RELEASED]);
+    });
+
     describe("should move the tank if the direction key is pressed", function() {
         var SPEED = 4;
 
@@ -24,8 +32,11 @@ describe("TankController", function() {
             var tank = new Tank(eventManager);
             tank.setNormalSpeed(SPEED);
             tank.setDirection(initialDirection);
-            var tankController = new TankController(tank);
+
+            var tankController = new TankController(eventManager, tank);
+
             tankController.notify({ name: Keyboard.Event.KEY_PRESSED, key: pressedKey });
+
             expect(tank.getSpeed()).toEqual(expectedSpeed);
             expect(tank.getDirection()).toEqual(expectedDirection);
         }
@@ -47,7 +58,8 @@ describe("TankController", function() {
             var tank = new Tank(eventManager);
             tank.setSpeed(SPEED);
             tank.setDirection(Sprite.Direction.RIGHT);
-            var tankController = new TankController(tank);
+
+            var tankController = new TankController(eventManager, tank);
 
             tankController.notify({ name: Keyboard.Event.KEY_RELEASED, key: key });
 
@@ -60,7 +72,7 @@ describe("TankController", function() {
             var eventManager = new EventManager();
             var tank = new Tank(eventManager);
             spyOn(tank, 'shoot');
-            var tankController = new TankController(tank);
+            var tankController = new TankController(eventManager, tank);
 
             tankController.notify({ name: Keyboard.Event.KEY_PRESSED, key: Keyboard.Key.SPACE });
 
