@@ -34,6 +34,21 @@ describe("Sprite", function() {
         });
     });
 
+    describe("#destroy", function() {
+        it("not destroyed", function() {
+            spyOn(sprite, 'destroyHook');
+            sprite.destroy();
+            expect(sprite.destroyHook).toHaveBeenCalled();
+        });
+
+        it("destroyed", function() {
+            sprite.destroy();
+            spyOn(sprite, 'destroyHook');
+            sprite.destroy();
+            expect(sprite.destroyHook).not.toHaveBeenCalled();
+        });
+    });
+
     it("#destroy", function() {
         spyOn(eventManager, 'removeSubscriber');
         spyOn(eventManager, 'fireEvent');

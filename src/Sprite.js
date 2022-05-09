@@ -4,19 +4,17 @@ function Sprite(eventManager) {
     this._eventManager = eventManager;
     this._direction = Sprite.Direction.RIGHT;
     this._speed = 0;
+    this._destroyed = false;
 
     this._eventManager.fireEvent({ 'name': Sprite.Event.CREATED, 'sprite': this });
-
 }
-
 Sprite.subclass(Rect);
 Sprite.Direction = {
-    RIGHT: 'RIGHT',
-    LEFT: 'LEFT',
-    UP: 'UP',
-    DOWN: 'DOWN',
+    RIGHT: 'right',
+    LEFT: 'left',
+    UP: 'up',
+    DOWN: 'down',
 };
-
 Sprite.Event = {};
 Sprite.Event.MOVED = 'Sprite.Event.MOVED';
 Sprite.Event.CREATED = 'Sprite.Event.CREATED';
@@ -35,7 +33,6 @@ Sprite.prototype.getSpeed = function() {
 Sprite.prototype.setSpeed = function(speed) {
     this._speed = speed;
 };
-
 Sprite.prototype.stop = function() {
     this._speed = 0;
 };
@@ -48,15 +45,53 @@ Sprite.prototype.move = function() {
     this._y = this._getNewY();
     this._eventManager.fireEvent({ 'name': Sprite.Event.MOVED, 'sprite': this });
 };
-
-Sprite.prototype.draw = function(ctx) {
-
-};
-
+/**
+ * Should not be overriden by subclasses. Instead override updateHook().
+ */
 Sprite.prototype.update = function() {
+    if (this._destroyed) {
+        this.doDestroy();
+        return;
+    }
+
+    this.move();
+    this.updateHook();
+};
+/**
+ * Should be overriden by subclasses. All update operations specific to a
+ * subclass should be placed here.
+ */
+Sprite.prototype.updateHook = function() {
 
 };
 
+
+/**
+ * Should not be overriden by subclasses. Instead override destroyHook().
+ */
+Sprite.prototype.destroy = function() {
+    if (this._destroyed) {
+        return;
+    }
+    this._destroyed = true;
+    this.destroyHook();
+};
+
+/**
+ * Should be overriden by subclasses. All destroy operations specific to a
+ * subclass should be placed here.
+ */
+Sprite.prototype.destroyHook = function() {
+
+};
+
+Sprite.prototype.isDestroyed = function() {
+    return this._destroyed;
+};
+Sprite.prototype.doDestroy = function() {
+    this._eventManager.removeSubscriber(this);
+    this._eventManager.fireEvent({ 'name': Sprite.Event.DESTROYED, 'sprite': this });
+};
 Sprite.prototype._getNewX = function() {
     var result = this._x;
 
