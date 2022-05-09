@@ -18,6 +18,11 @@ describe("Tank", function() {
         it("bullet speed should be 1", function() {
             expect(tank.getBulletSpeed()).toEqual(1);
         });
+
+        it("should have proper size", function() {
+            expect(tank.getWidth()).toEqual(26);
+            expect(tank.getHeight()).toEqual(26);
+        });
     });
 
     describe("can move", function() {
@@ -65,10 +70,8 @@ describe("Tank", function() {
             eventManager.fireEvent.reset();
             tank.shoot();
             expect(eventManager.fireEvent).not.toHaveBeenCalled();
-
             tank.notify({ 'name': Bullet.Event.DESTROYED, 'tank': tank });
             tank.shoot();
-
             expect(eventManager.fireEvent).toHaveBeenCalledWith({
                 'name': Tank.Event.SHOOT,
                 'tank': tank
@@ -85,7 +88,6 @@ describe("Tank", function() {
             tank.updateTrackFrame();
             expect(tank.getTrackFrame()).toEqual(1);
         });
-
         it("don't animate when tank is not moving", function() {
             tank.setSpeed(0);
             expect(tank.getTrackFrame()).toEqual(1);
@@ -108,15 +110,51 @@ describe("Tank", function() {
             expect(tank.getImage()).toEqual('tank_left_2');
         });
     });
+
+    describe("#resolveCollisionWithWall", function() {
+        it("tank moves right", function() {
+            checkDirection(new Rect(1, 1, 2, 2), new Rect(2, 1, 2, 2), Sprite.Direction.RIGHT, new Point(0, 1));
+        });
+
+        it("tank moves left", function() {
+            checkDirection(new Rect(2, 1, 2, 2), new Rect(1, 1, 2, 2), Sprite.Direction.LEFT, new Point(3, 1));
+        });
+
+        it("tank moves up", function() {
+            checkDirection(new Rect(1, 2, 2, 2), new Rect(1, 1, 2, 2), Sprite.Direction.UP, new Point(1, 3));
+        });
+
+        it("tank moves down", function() {
+            checkDirection(new Rect(1, 1, 2, 2), new Rect(1, 2, 2, 2), Sprite.Direction.DOWN, new Point(1, 0));
+        });
+
+        function checkDirection(tankRect, wallRect, direction, resolvedTankPosition) {
+            tank.setRect(tankRect);
+            tank.setDirection(direction);
+            var wall = new Wall(eventManager);
+            wall.setRect(wallRect);
+            tank.resolveCollisionWithWall(wall);
+            expect(tank.getPosition()).toEqual(resolvedTankPosition);
+        }
+    });
+
+    it("should resolve collision when collides with a wall", function() {
+        spyOn(tank, 'resolveCollisionWithWall');
+        var wall = new Wall(eventManager);
+        tank.notify({
+            'name': CollisionDetector.Event.COLLISION,
+            'initiator': tank,
+            'sprite': wall
+        });
+        expect(tank.resolveCollisionWithWall).toHaveBeenCalledWith(wall);
+    });
 });
 
 describe("Tank", function() {
     it("should subscribe", function() {
-            var eventManager = new EventManager();
-            spyOn(eventManager, 'addSubscriber');
-            var tank = new Tank(eventManager);
-            expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [Bullet.Event.DESTROYED]);
-            [Bullet.Event.DESTROYED, CollisionDetector.Event.COLLISION]);
-
+        var eventManager = new EventManager();
+        spyOn(eventManager, 'addSubscriber');
+        var tank = new Tank(eventManager);
+        expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [Bullet.Event.DESTROYED, CollisionDetector.Event.COLLISION]);
     });
 });
