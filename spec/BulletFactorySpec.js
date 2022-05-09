@@ -49,4 +49,14 @@ describe("BulletFactory", function() {
 
         }
     });
+
+    it("should create a bullet when tank shoots", function() {
+        var eventManager = new EventManager();
+        var factory = new BulletFactory(eventManager);
+        spyOn(factory, 'createBullet');
+        var tank = new Tank(eventManager);
+        factory.notify({ 'name': Tank.Event.SHOOT, 'tank': tank });
+        expect(factory.createBullet).toHaveBeenCalledWith(tank);
+    });
+
 });

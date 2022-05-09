@@ -6,11 +6,15 @@ function Rect(x, y, w, h) {
 
 Rect.subclass(Point);
 
-Rect.prototype.setRect = function(x, y, w, h) {
-    this._x = x;
-    this._y = y;
-    this._w = w;
-    this._h = h;
+Rect.prototype.setRect = function(rect) {
+    this._x = rect.getX();
+    this._y = rect.getY();
+    this._w = rect.getWidth();
+    this._h = rect.getHeight();
+};
+
+Rect.prototype.getRect = function() {
+    return new Rect(this._x, this._y, this._w, this._h);
 };
 
 Rect.prototype.setWidth = function(width) {
@@ -48,6 +52,10 @@ Rect.prototype.getTop = function() {
 
 Rect.prototype.getBottom = function() {
     return this._y + this._h - 1;
+};
+
+Rect.prototype.getCenter = function() {
+    return new Point(this._x + this._w / 2, this._y + this._h / 2);
 };
 
 Rect.prototype.intersects = function(other) {

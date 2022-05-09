@@ -1,6 +1,9 @@
-function TankController(tank) {
+function TankController(eventManager, tank) {
+    this._eventManager = eventManager;
+    this._eventManager.addSubscriber(this, [Keyboard.Event.KEY_PRESSED, Keyboard.Event.KEY_RELEASED]);
     this._tank = tank;
 }
+
 TankController.prototype.notify = function(event) {
     if (event.name == Keyboard.Event.KEY_PRESSED) {
         this._keyPressed(event.key);
@@ -25,7 +28,6 @@ TankController.prototype._keyPressed = function(key) {
         this._tank.shoot();
     }
 };
-
 TankController.prototype._keyReleased = function(key) {
     if (this._tank.getDirection() == Sprite.Direction.LEFT && key == Keyboard.Key.LEFT ||
         this._tank.getDirection() == Sprite.Direction.RIGHT && key == Keyboard.Key.RIGHT ||
