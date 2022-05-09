@@ -1,6 +1,8 @@
 function BulletFactory(eventManager) {
     this._eventManager = eventManager;
+    this._eventManager.addSubscriber(this, [Tank.Event.SHOOT]);
 }
+
 BulletFactory.prototype.notify = function(event) {
     if (event.name == Tank.Event.SHOOT) {
         this._createBullet(event.tank);
@@ -16,6 +18,7 @@ BulletFactory.prototype._createBullet = function(tank) {
 
     this._eventManager.fireEvent({ 'name': Sprite.Event.CREATED, 'sprite': bullet });
 };
+
 BulletFactory.prototype._getBulletPosition = function(tank) {
     var x, y;
     var direction = tank.getDirection();
