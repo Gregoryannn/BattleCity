@@ -22,8 +22,15 @@
     <script type="text/javascript" src="src/Painter.js"></script>
     <script type="text/javascript" src="src/Updater.js"></script>
 
+    <script type="text/javascript" src="src/ExplosionFactory.js"></script>
+    <script type="text/javascript" src="src/Explosion.js"></script>
+
     <script type="text/javascript" src="lib/Stats.js"></script>
     <script type="text/javascript" src="src/FPSCounter.js"></script>
+
+    <script type="text/javascript" src="src/ImageManager.js"></script>
+    <script type="text/javascript" src="src/Level.js"></script>
+
 
     <script type="text/javascript">
         $(function() {
@@ -39,17 +46,7 @@
             var eventManager = new EventManager();
             var keyboard = new Keyboard(eventManager);
 
-            var painter = new Painter(eventManager);
-            var updater = new Updater(eventManager);
-            var bounds = new Rect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-            var collisionDetector = new CollisionDetector(eventManager, bounds);
-
-            var tank = new Tank(eventManager);
-            tank.setRect(0, 0, 32, 32);
-            tank.setNormalSpeed(4);
-            tank.setBulletSize(4);
-            tank.setBulletSpeed(2);
+            var level = new Level(eventManager);
 
             eventManager.fireEvent({
                 name: Sprite.Event.CREATED,
@@ -57,8 +54,9 @@
             });
 
             var tankController = new TankController(eventManager, tank);
-
             var bulletFactory = new BulletFactory(eventManager);
+            var explosionFactory = new ExplosionFactory(eventManager);
+
 
             setInterval(gameLoop, 1000 / FPS);
 
@@ -66,11 +64,10 @@
                 fpsCounter.begin();
 
                 keyboard.fireEvents();
-                updater.update();
+                level.update();
 
                 clearCanvas();
-                painter.draw(ctx);
-
+                level.draw(ctx);
                 fpsCounter.end();
             }
 
@@ -81,7 +78,7 @@
             };
 
             function clearCanvas() {
-                ctx.fillStyle = "black";
+                ctx.fillStyle = "#808080";
                 ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             };
         });
