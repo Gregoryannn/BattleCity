@@ -5,13 +5,15 @@ function Sprite(eventManager) {
     this._direction = Sprite.Direction.RIGHT;
     this._speed = 0;
 }
+
 Sprite.subclass(Rect);
 Sprite.Direction = {
-    RIGHT: 'RIGHT',
-    LEFT: 'LEFT',
-    UP: 'UP',
-    DOWN: 'DOWN',
+    RIGHT: 'right',
+    LEFT: 'left',
+    UP: 'up',
+    DOWN: 'down',
 };
+
 Sprite.Event = {};
 Sprite.Event.MOVED = 'Sprite.Event.MOVED';
 Sprite.Event.CREATED = 'Sprite.Event.CREATED';
@@ -44,14 +46,17 @@ Sprite.prototype.move = function() {
 };
 
 Sprite.prototype.draw = function(ctx) {
-
     ctx.fillStyle = "red";
     ctx.fillRect(this._x, this._y, this._w, this._h);
 };
 
 Sprite.prototype.update = function() {
-
     this.move();
+};
+
+Sprite.prototype.destroy = function() {
+    this._eventManager.removeSubscriber(this);
+    this._eventManager.fireEvent({ 'name': Sprite.Event.DESTROYED, 'sprite': this });
 };
 
 Sprite.prototype._getNewX = function() {
