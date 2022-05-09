@@ -65,8 +65,10 @@ describe("Tank", function() {
             eventManager.fireEvent.reset();
             tank.shoot();
             expect(eventManager.fireEvent).not.toHaveBeenCalled();
+
             tank.notify({ 'name': Bullet.Event.DESTROYED, 'tank': tank });
             tank.shoot();
+
             expect(eventManager.fireEvent).toHaveBeenCalledWith({
                 'name': Tank.Event.SHOOT,
                 'tank': tank
@@ -74,11 +76,14 @@ describe("Tank", function() {
         });
     });
 });
+
 describe("Tank", function() {
     it("should subscribe", function() {
-        var eventManager = new EventManager();
-        spyOn(eventManager, 'addSubscriber');
-        var tank = new Tank(eventManager);
-        expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [Bullet.Event.DESTROYED]);
+            var eventManager = new EventManager();
+            spyOn(eventManager, 'addSubscriber');
+            var tank = new Tank(eventManager);
+            expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [Bullet.Event.DESTROYED]);
+            [Bullet.Event.DESTROYED, CollisionDetector.Event.COLLISION]);
+
     });
 });
