@@ -4,7 +4,11 @@ function Sprite(eventManager) {
     this._eventManager = eventManager;
     this._direction = Sprite.Direction.RIGHT;
     this._speed = 0;
+
+    this._eventManager.fireEvent({ 'name': Sprite.Event.CREATED, 'sprite': this });
+
 }
+
 Sprite.subclass(Rect);
 Sprite.Direction = {
     RIGHT: 'RIGHT',
@@ -12,6 +16,7 @@ Sprite.Direction = {
     UP: 'UP',
     DOWN: 'DOWN',
 };
+
 Sprite.Event = {};
 Sprite.Event.MOVED = 'Sprite.Event.MOVED';
 Sprite.Event.CREATED = 'Sprite.Event.CREATED';
@@ -30,6 +35,7 @@ Sprite.prototype.getSpeed = function() {
 Sprite.prototype.setSpeed = function(speed) {
     this._speed = speed;
 };
+
 Sprite.prototype.stop = function() {
     this._speed = 0;
 };
