@@ -1,21 +1,22 @@
-describe("Sprite", function() {
+describe("Sprite", function () {
     var eventManager, sprite;
 
-    beforeEach(function() {
+    beforeEach(function () {
         eventManager = new EventManager();
         sprite = new Sprite(eventManager);
     });
 
-    it("initial state", function() {
+    it("initial state", function () {
         expect(sprite.getDirection()).toEqual(Sprite.Direction.RIGHT);
         expect(sprite.getPrevDirection()).toEqual(Sprite.Direction.RIGHT);
+        expect(sprite.getNormalSpeed()).toEqual(0);
         expect(sprite.getSpeed()).toEqual(0);
         expect(sprite.isDestroyed()).toBeFalsy();
         expect(sprite.isTurn()).toBeFalsy();
     });
 
-    describe("#move", function() {
-        it("should fire event when moved", function() {
+    describe("#move", function () {
+        it("should fire event when moved", function () {
             spyOn(eventManager, 'fireEvent');
             sprite.setSpeed(1);
             sprite.move();
@@ -25,21 +26,49 @@ describe("Sprite", function() {
             });
         });
 
-        it("shouldn't fire event if not moved", function() {
+        it("shouldn't fire event if not moved", function () {
             spyOn(eventManager, 'fireEvent');
             sprite.move();
             expect(eventManager.fireEvent).not.toHaveBeenCalled();
         });
     });
 
-    describe("#destroy", function() {
-        it("not destroyed", function() {
+    describe("can move", function () {
+        var INIT_X = 0, INIT_Y = 0, SPEED = 1;
+
+        it("right", function () {
+            checkDirection(Sprite.Direction.RIGHT, new Point(INIT_X + SPEED, INIT_Y))
+        });
+
+        it("left", function () {
+            checkDirection(Sprite.Direction.LEFT, new Point(INIT_X - SPEED, INIT_Y))
+        });
+
+        it("up", function () {
+            checkDirection(Sprite.Direction.UP, new Point(INIT_X, INIT_Y - SPEED))
+        });
+
+        it("down", function () {
+            checkDirection(Sprite.Direction.DOWN, new Point(INIT_X, INIT_Y + SPEED))
+        });
+
+        function checkDirection(direction, finalPosition) {
+            sprite.setXY(INIT_X, INIT_Y);
+            sprite.setSpeed(SPEED);
+            sprite.setDirection(direction);
+            sprite.move();
+            expect(sprite.getPosition()).toEqual(finalPosition);
+        }
+    });
+
+    describe("#destroy", function () {
+        it("not destroyed", function () {
             spyOn(sprite, 'destroyHook');
             sprite.destroy();
             expect(sprite.destroyHook).toHaveBeenCalled();
         });
 
-        it("destroyed", function() {
+        it("destroyed", function () {
             sprite.destroy();
             spyOn(sprite, 'destroyHook');
             sprite.destroy();
@@ -47,7 +76,7 @@ describe("Sprite", function() {
         });
     });
 
-    it("#doDestroy", function() {
+    it("#doDestroy", function () {
         spyOn(eventManager, 'removeSubscriber');
         spyOn(eventManager, 'fireEvent');
         sprite.doDestroy();
@@ -55,8 +84,8 @@ describe("Sprite", function() {
         expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Sprite.Event.DESTROYED, 'sprite': sprite });
     });
 
-    describe("#update", function() {
-        it("not destroyed", function() {
+    describe("#update", function () {
+        it("not destroyed", function () {
             spyOn(sprite, 'doDestroy');
             spyOn(sprite, 'move');
             sprite.update();
@@ -64,7 +93,7 @@ describe("Sprite", function() {
             expect(sprite.move).toHaveBeenCalled();
         });
 
-        it("destroyed", function() {
+        it("destroyed", function () {
             spyOn(sprite, 'doDestroy');
             spyOn(sprite, 'move');
             sprite.destroy();
@@ -74,38 +103,37 @@ describe("Sprite", function() {
         });
     });
 
-    describe("#isTurn", function() {
-        it("test 1", function() {
+    describe("#isTurn", function () {
+        it("test 1", function () {
             sprite.setDirection(Sprite.Direction.RIGHT);
             sprite.move();
             sprite.setDirection(Sprite.Direction.UP);
             expect(sprite.isTurn()).toBeTruthy();
         });
 
-        it("test 2", function() {
+        it("test 2", function () {
             sprite.setDirection(Sprite.Direction.RIGHT);
             sprite.move();
             expect(sprite.isTurn()).toBeFalsy();
         });
     });
 
-    describe("#getPrevDirection", function() {
-        it("test 1", function() {
+    describe("#getPrevDirection", function () {
+        it("test 1", function () {
             sprite.setDirection(Sprite.Direction.RIGHT);
             sprite.setDirection(Sprite.Direction.LEFT);
             expect(sprite.getPrevDirection()).toEqual(Sprite.Direction.RIGHT);
         });
 
-        it("test 2", function() {
+        it("test 2", function () {
             sprite.setDirection(Sprite.Direction.DOWN);
             sprite.setDirection(Sprite.Direction.RIGHT);
             expect(sprite.getPrevDirection()).toEqual(Sprite.Direction.DOWN);
         });
     });
 });
-
-describe("Sprite", function() {
-    it("should fire an event when created", function() {
+describe("Sprite", function () {
+    it("should fire an event when created", function () {
         var eventManager = new EventManager();
         spyOn(eventManager, 'fireEvent');
         var sprite = new Sprite(eventManager);

@@ -7,7 +7,6 @@ function Cursor(eventManager) {
     this._h = 32;
     this._normalSpeed = 32;
     this._blinkTimer = new BlinkTimer(12);
-
     this._moveDelay = 20;
     this._moveTimer = 0;
     this._moved = false;
@@ -16,7 +15,7 @@ function Cursor(eventManager) {
 Cursor.subclass(Sprite);
 
 Cursor.prototype.toNormalSpeed = function () {
-    this._speed = this._normalSpeed;
+    Sprite.prototype.toNormalSpeed.call(this);
     this._moved = false;
 };
 

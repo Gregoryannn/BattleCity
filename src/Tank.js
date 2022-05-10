@@ -1,15 +1,14 @@
 function Tank(eventManager) {
     Sprite.call(this, eventManager);
 
-    eventManager.addSubscriber(this, [Bullet.Event.DESTROYED,
+    eventManager.addSubscriber(this,
+        [Bullet.Event.DESTROYED,
         CollisionDetector.Event.COLLISION,
-        CollisionDetector.Event.OUT_OF_BOUNDS
-    ]);
+        CollisionDetector.Event.OUT_OF_BOUNDS]);
 
     this._w = 32;
     this._h = 32;
 
-    this._normalSpeed = 0;
     this._bulletSize = 1;
     this._bulletSpeed = 1;
     this._trackFrame = 1;
@@ -22,35 +21,23 @@ function Tank(eventManager) {
 Tank.subclass(Sprite);
 Tank.Event = {};
 Tank.Event.SHOOT = 'Tank.Event.SHOOT';
-Tank.prototype.getNormalSpeed = function() {
-    return this._normalSpeed;
-};
 
-Tank.prototype.setNormalSpeed = function(speed) {
-    this._normalSpeed = speed;
-};
-
-Tank.prototype.toNormalSpeed = function() {
-    this._speed = this._normalSpeed;
-};
-
-Tank.prototype.setBulletSize = function(size) {
+Tank.prototype.setBulletSize = function (size) {
     this._bulletSize = size;
 };
 
-Tank.prototype.getBulletSize = function() {
+Tank.prototype.getBulletSize = function () {
     return this._bulletSize;
 };
 
-Tank.prototype.setBulletSpeed = function(speed) {
+Tank.prototype.setBulletSpeed = function (speed) {
     this._bulletSpeed = speed;
 };
-
-Tank.prototype.getBulletSpeed = function() {
+Tank.prototype.getBulletSpeed = function () {
     return this._bulletSpeed;
 };
 
-Tank.prototype.shoot = function() {
+Tank.prototype.shoot = function () {
     if (this._bulletShot) {
         return;
     }
@@ -58,63 +45,55 @@ Tank.prototype.shoot = function() {
     this._eventManager.fireEvent({ 'name': Tank.Event.SHOOT, 'tank': this });
 };
 
-Tank.prototype.setTrackFrame = function(frame) {
+Tank.prototype.setTrackFrame = function (frame) {
     this._trackFrame = frame;
 };
 
-Tank.prototype.getTrackFrame = function() {
+Tank.prototype.getTrackFrame = function () {
     return this._trackFrame;
 };
-
-Tank.prototype.updateTrackFrame = function() {
+Tank.prototype.updateTrackFrame = function () {
     if (this._speed == 0) {
         return;
     }
     this._trackFrame = this._trackFrame == 1 ? 2 : 1;
 };
-
-Tank.prototype.getImage = function() {
+Tank.prototype.getImage = function () {
     return 'tank_' + this._direction + '_' + this._trackFrame;
 };
-
-Tank.prototype.updateHook = function() {
+Tank.prototype.updateHook = function () {
     this.updateTrackFrame();
 };
-
-Tank.prototype.notify = function(event) {
+Tank.prototype.notify = function (event) {
     if (event.name == Bullet.Event.DESTROYED && event.tank == this) {
         this._bulletShot = false;
-    } else if (event.name == CollisionDetector.Event.COLLISION && event.initiator === this && event.sprite instanceof Wall) {
+    }
+    else if (event.name == CollisionDetector.Event.COLLISION && event.initiator === this && event.sprite instanceof Wall) {
         this.resolveCollisionWithWall(event.sprite);
-    } else if (event.name == CollisionDetector.Event.OUT_OF_BOUNDS && event.sprite === this) {
+    }
+    else if (event.name == CollisionDetector.Event.OUT_OF_BOUNDS && event.sprite === this) {
         this.resolveOutOfBounds(event.bounds);
     }
 };
-
-Tank.prototype.setTurnSmoothSens = function(sensitivity) {
+Tank.prototype.setTurnSmoothSens = function (sensitivity) {
     this._turnSmoothSens = sensitivity;
 };
-
-Tank.prototype.getTurnSmoothSens = function() {
+Tank.prototype.getTurnSmoothSens = function () {
     return this._turnSmoothSens;
 };
-
-Tank.prototype.setTurnRoundTo = function(value) {
+Tank.prototype.setTurnRoundTo = function (value) {
     this._turnRoundTo = value;
 };
-
-Tank.prototype.getTurnRoundTo = function() {
+Tank.prototype.getTurnRoundTo = function () {
     return this._turnRoundTo;
 };
-
-Tank.prototype.move = function() {
+Tank.prototype.move = function () {
     if (this._turn) {
         this._smoothTurn();
     }
     Sprite.prototype.move.call(this);
 };
-
-Tank.prototype._smoothTurn = function() {
+Tank.prototype._smoothTurn = function () {
     var val;
 
     if (this._direction == Sprite.Direction.UP || this._direction == Sprite.Direction.DOWN) {
@@ -123,19 +102,22 @@ Tank.prototype._smoothTurn = function() {
             if (val < this._turnSmoothSens) {
                 this._x += val;
             }
-        } else if (this._prevDirection == Sprite.Direction.LEFT) {
+        }
+        else if (this._prevDirection == Sprite.Direction.LEFT) {
             val = this._x % this._turnRoundTo;
             if (val < this._turnSmoothSens) {
                 this._x -= val;
             }
         }
-    } else {
+    }
+    else {
         if (this._prevDirection == Sprite.Direction.DOWN) {
             val = this._turnRoundTo - (this._y % this._turnRoundTo);
             if (val < this._turnSmoothSens) {
                 this._y += val;
             }
-        } else if (this._prevDirection == Sprite.Direction.UP) {
+        }
+        else if (this._prevDirection == Sprite.Direction.UP) {
             val = this._y % this._turnRoundTo;
             if (val < this._turnSmoothSens) {
                 this._y -= val;
@@ -143,35 +125,38 @@ Tank.prototype._smoothTurn = function() {
         }
     }
 };
-
-Tank.prototype.draw = function(ctx) {
+Tank.prototype.draw = function (ctx) {
     ctx.drawImage(ImageManager.getImage(this.getImage()), this._x, this._y);
 };
-
-Tank.prototype.resolveCollisionWithWall = function(wall) {
+Tank.prototype.resolveCollisionWithWall = function (wall) {
     var moveX = 0;
     var moveY = 0;
     if (this._direction == Sprite.Direction.RIGHT) {
         moveX = this.getRight() - wall.getLeft() + 1;
-    } else if (this._direction == Sprite.Direction.LEFT) {
+    }
+    else if (this._direction == Sprite.Direction.LEFT) {
         moveX = this.getLeft() - wall.getRight() - 1;
-    } else if (this._direction == Sprite.Direction.UP) {
+    }
+    else if (this._direction == Sprite.Direction.UP) {
         moveY = this.getTop() - wall.getBottom() - 1;
-    } else if (this._direction == Sprite.Direction.DOWN) {
+    }
+    else if (this._direction == Sprite.Direction.DOWN) {
         moveY = this.getBottom() - wall.getTop() + 1;
     }
     this._x -= moveX;
     this._y -= moveY;
 };
-
-Tank.prototype.resolveOutOfBounds = function(bounds) {
+Tank.prototype.resolveOutOfBounds = function (bounds) {
     if (this._direction == Sprite.Direction.RIGHT) {
         this._x = bounds.getRight() - this._w + 1;
-    } else if (this._direction == Sprite.Direction.LEFT) {
+    }
+    else if (this._direction == Sprite.Direction.LEFT) {
         this._x = bounds.getLeft();
-    } else if (this._direction == Sprite.Direction.UP) {
+    }
+    else if (this._direction == Sprite.Direction.UP) {
         this._y = bounds.getTop();
-    } else if (this._direction == Sprite.Direction.DOWN) {
+    }
+    else if (this._direction == Sprite.Direction.DOWN) {
         this._y = bounds.getBottom() - this._h + 1;
     }
 };
