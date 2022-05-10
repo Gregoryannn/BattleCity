@@ -2,12 +2,15 @@ function Sprite(eventManager) {
     Rect.call(this);
 
     this._eventManager = eventManager;
+    this._prevDirection = Sprite.Direction.RIGHT;
+
     this._direction = Sprite.Direction.RIGHT;
     this._speed = 0;
     this._destroyed = false;
-
+    this._turn = false;
     this._eventManager.fireEvent({ 'name': Sprite.Event.CREATED, 'sprite': this });
 }
+
 Sprite.subclass(Rect);
 Sprite.Direction = {
     RIGHT: 'right',
@@ -15,6 +18,7 @@ Sprite.Direction = {
     UP: 'up',
     DOWN: 'down',
 };
+
 Sprite.Event = {};
 Sprite.Event.MOVED = 'Sprite.Event.MOVED';
 Sprite.Event.CREATED = 'Sprite.Event.CREATED';
@@ -24,8 +28,22 @@ Sprite.prototype.getDirection = function() {
 };
 
 Sprite.prototype.setDirection = function(direction) {
+    if (direction == this._direction) {
+        return;
+    }
+    this._prevDirection = this._direction;
     this._direction = direction;
+    this._turn = true;
 };
+
+Sprite.prototype.getPrevDirection = function() {
+    return this._prevDirection;
+};
+
+Sprite.prototype.isTurn = function() {
+    return this._turn;
+};
+
 Sprite.prototype.getSpeed = function() {
     return this._speed;
 };
@@ -33,6 +51,7 @@ Sprite.prototype.getSpeed = function() {
 Sprite.prototype.setSpeed = function(speed) {
     this._speed = speed;
 };
+
 Sprite.prototype.stop = function() {
     this._speed = 0;
 };
@@ -43,11 +62,14 @@ Sprite.prototype.move = function() {
     }
     this._x = this._getNewX();
     this._y = this._getNewY();
+    this._turn = false;
     this._eventManager.fireEvent({ 'name': Sprite.Event.MOVED, 'sprite': this });
 };
+
 /**
  * Should not be overriden by subclasses. Instead override updateHook().
  */
+
 Sprite.prototype.update = function() {
     if (this._destroyed) {
         this.doDestroy();
