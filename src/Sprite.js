@@ -68,7 +68,13 @@ Sprite.prototype.move = function () {
     this._y = this._getNewY();
     this._turn = false;
     this._eventManager.fireEvent({ 'name': Sprite.Event.MOVED, 'sprite': this });
+    this.moveHook();
 };
+
+Sprite.prototype.moveHook = function () {
+    // Should be overriden by subclasses to add behavior to the move() method.
+};
+
 /**
  * Should not be overriden by subclasses. Instead override updateHook().
  */
@@ -127,15 +133,12 @@ Sprite.prototype.resolveOutOfBounds = function (bounds) {
         this._y = bounds.getBottom() - this._h + 1;
     }
 };
-
 Sprite.prototype.setZIndex = function (zIndex) {
     this._zIndex = zIndex;
 };
-
 Sprite.prototype.getZIndex = function () {
     return this._zIndex;
 };
-
 Sprite.prototype._getNewX = function () {
     var result = this._x;
 

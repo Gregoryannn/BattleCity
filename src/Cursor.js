@@ -12,12 +12,9 @@ function Cursor(eventManager) {
     this._moveTimer = 0;
     this._moved = false;
 }
-
 Cursor.subclass(Sprite);
-
 Cursor.Event = {};
 Cursor.Event.BUILD = 'Cursor.Event.BUILD';
-
 Cursor.prototype.toNormalSpeed = function () {
     Sprite.prototype.toNormalSpeed.call(this);
     this._moved = false;
@@ -25,11 +22,9 @@ Cursor.prototype.toNormalSpeed = function () {
 Cursor.prototype.setMoveDelay = function (delay) {
     this._moveDelay = delay;
 };
-
 Cursor.prototype.build = function () {
     this._eventManager.fireEvent({ 'name': Cursor.Event.BUILD, 'cursor': this });
 };
-
 Cursor.prototype.notify = function (event) {
     if (event.name == CollisionDetector.Event.OUT_OF_BOUNDS && event.sprite === this) {
         this.resolveOutOfBounds(event.bounds);
@@ -46,6 +41,11 @@ Cursor.prototype.move = function () {
     this._moveTimer = 0;
     this._moved = true;
 };
+
+Cursor.prototype.moveHook = function () {
+    this._eventManager.fireEvent({ 'name': Cursor.Event.MOVED, 'cursor': this });
+};
+
 Cursor.prototype.updateHook = function () {
     this._blinkTimer.update();
 };
