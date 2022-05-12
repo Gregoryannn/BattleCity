@@ -1,8 +1,10 @@
 function StructureManager(eventManager) {
     this._eventManager = eventManager;
-    this._eventManager.addSubscriber(this, [Builder.Event.STRUCTURE_CREATED]);
+    this._eventManager.addSubscriber(this,
+        [Builder.Event.STRUCTURE_CREATED, Sprite.Event.DESTROYED]);
     this._sprites = [];
 }
+
 StructureManager.prototype.destroySpritesUnderCursor = function (cursor) {
     var cursorRect = cursor.getRect();
 
@@ -26,11 +28,9 @@ StructureManager.prototype.addSprite = function (sprite) {
 StructureManager.prototype.containsSprite = function (sprite) {
     return arrayContains(this._sprites, sprite);
 };
-
 StructureManager.prototype.getSprites = function () {
     return this._sprites;
 };
-
 StructureManager.prototype.notify = function (event) {
     if (event.name == Builder.Event.STRUCTURE_CREATED) {
         this.destroySpritesUnderCursor(event.cursor);
