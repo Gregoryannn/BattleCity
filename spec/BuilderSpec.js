@@ -60,6 +60,9 @@ describe("Builder", function () {
             expect(builder.buildBrickWallFull).toHaveBeenCalledWith(cursor.getPosition());
             builder.buildBrickWallFull.reset();
 
+            builder.build(cursor);
+            expect(builder.buildBrickWallRight).toHaveBeenCalledWith(cursor.getPosition());
+            builder.buildBrickWallRight.reset();
             expect(builder.buildSteelWallRight).toHaveBeenCalledWith(cursor.getPosition());
             builder.buildSteelWallRight.reset();
 
@@ -86,7 +89,9 @@ describe("Builder", function () {
             builder.build(cursor);
             expect(builder.buildBrickWallRight).toHaveBeenCalled();
             builder.buildBrickWallRight.reset();
+
             builder.notify({ 'name': Cursor.Event.MOVED, 'cursor': cursor });
+
             builder.build(cursor);
             expect(builder.buildBrickWallRight).toHaveBeenCalled();
         });

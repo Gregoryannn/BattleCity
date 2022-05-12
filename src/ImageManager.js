@@ -1,4 +1,4 @@
-var ImageManager = (function() {
+var ImageManager = (function () {
     var images = {
         tank_down_1: null,
         tank_down_2: null,
@@ -19,7 +19,9 @@ var ImageManager = (function() {
         explosion_3: null,
 
         wall_brick: null,
-        wall_steel: null
+        wall_steel: null,
+
+        base: null,
     };
 
     for (var i in images) {
@@ -29,7 +31,7 @@ var ImageManager = (function() {
     }
 
     return {
-        getImage: function(name) {
+        getImage: function (name) {
             return images[name];
         }
     };
