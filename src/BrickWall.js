@@ -11,79 +11,74 @@ function BrickWall(eventManager) {
 
 BrickWall.subclass(Wall);
 
-BrickWall.prototype.notify = function(event) {
+BrickWall.prototype.getClassName = function () {
+    return 'BrickWall';
+};
+
+BrickWall.prototype.notify = function (event) {
     if (event.name == CollisionDetector.Event.COLLISION && event.initiator instanceof Bullet && event.sprite === this) {
         this.hitByBullet(event.initiator);
     }
 };
-
-BrickWall.prototype.hitByBullet = function(bullet) {
+BrickWall.prototype.hitByBullet = function (bullet) {
     if (bullet.getDirection() == Sprite.Direction.RIGHT) {
         this.hitLeft();
-    } else if (bullet.getDirection() == Sprite.Direction.LEFT) {
+    }
+    else if (bullet.getDirection() == Sprite.Direction.LEFT) {
         this.hitRight();
-    } else if (bullet.getDirection() == Sprite.Direction.DOWN) {
+    }
+    else if (bullet.getDirection() == Sprite.Direction.DOWN) {
         this.hitTop();
-    } else if (bullet.getDirection() == Sprite.Direction.UP) {
+    }
+    else if (bullet.getDirection() == Sprite.Direction.UP) {
         this.hitBottom();
     }
 };
-
-BrickWall.prototype.hitLeft = function() {
+BrickWall.prototype.hitLeft = function () {
     if (this._hitLeft || this._hitRight) {
         this.destroy();
         return;
     }
     this._hitLeft = true;
 };
-
-BrickWall.prototype.isHitLeft = function() {
+BrickWall.prototype.isHitLeft = function () {
     return this._hitLeft;
 };
-
-BrickWall.prototype.hitRight = function() {
+BrickWall.prototype.hitRight = function () {
     if (this._hitRight || this._hitLeft) {
         this.destroy();
         return;
     }
     this._hitRight = true;
 };
-
-BrickWall.prototype.isHitRight = function() {
+BrickWall.prototype.isHitRight = function () {
     return this._hitRight;
 };
-
-BrickWall.prototype.hitTop = function() {
+BrickWall.prototype.hitTop = function () {
     if (this._hitTop || this._hitBottom) {
         this.destroy();
         return;
     }
     this._hitTop = true;
 };
-
-
-BrickWall.prototype.isHitTop = function() {
+BrickWall.prototype.isHitTop = function () {
     return this._hitTop;
 };
-
-BrickWall.prototype.hitBottom = function() {
+BrickWall.prototype.hitBottom = function () {
     if (this._hitBottom || this._hitTop) {
         this.destroy();
         return;
     }
     this._hitBottom = true;
 };
-
-BrickWall.prototype.isHitBottom = function() {
+BrickWall.prototype.isHitBottom = function () {
     return this._hitBottom;
 };
-
-BrickWall.prototype.draw = function(ctx) {
+BrickWall.prototype.draw = function (ctx) {
     ctx.drawImage(ImageManager.getImage('wall_brick'), this._x, this._y);
     this._hideDestroyedAreas(ctx);
 };
-
-BrickWall.prototype._hideDestroyedAreas = function(ctx) {
+BrickWall.prototype._hideDestroyedAreas = function (ctx) {
     ctx.fillStyle = "black";
 
     if (this._hitTop) {
