@@ -18,6 +18,7 @@ function Builder(eventManager) {
         Builder.Structure.CLEAR,
     ];
     this._structureIndex = 0;
+    this._prevStructureIndex = 0;
     this._structure = this._structures[0];
 
     this._tileSize = Globals.TILE_SIZE;
@@ -33,12 +34,9 @@ Builder.Structure.STEEL_WALL_BOTTOM = 'Builder.Structure.STEEL_WALL_BOTTOM';
 Builder.Structure.STEEL_WALL_LEFT = 'Builder.Structure.STEEL_WALL_LEFT';
 Builder.Structure.STEEL_WALL_TOP = 'Builder.Structure.STEEL_WALL_TOP';
 Builder.Structure.STEEL_WALL_FULL = 'Builder.Structure.STEEL_WALL_FULL';
-
 Builder.Structure.CLEAR = 'Builder.Structure.CLEAR';
-
 Builder.Event = {};
 Builder.Event.STRUCTURE_CREATED = 'Builder.Event.STRUCTURE_CREATED';
-
 Builder.prototype.setTileSize = function (size) {
     this._tileSize = size;
 };
@@ -125,11 +123,9 @@ Builder.prototype.buildSteelWallTop = function (position) {
 Builder.prototype.buildSteelWallFull = function (position) {
     return this._buildWallFull(position, new SteelWallFactory(this._eventManager));
 };
-
 Builder.prototype.clear = function (position) {
     return [];
 };
-
 Builder.prototype._buildWallRight = function (position, factory) {
     var parts = [];
 
@@ -215,17 +211,17 @@ Builder.prototype._buildWallFull = function (position, factory) {
 
     return parts;
 };
+
 Builder.prototype._nextStructure = function () {
+    this._prevStructureIndex = this._structureIndex;
     this._structureIndex++;
     if (this._structureIndex >= this._structures.length) {
         this._structureIndex = 0;
     }
     this._structure = this._structures[this._structureIndex];
 };
+
 Builder.prototype._prevStructure = function () {
-    this._structureIndex--;
-    if (this._structureIndex < 0) {
-        this._structureIndex = this._structures.length - 1;
-    }
+     this._structureIndex = this._prevStructureIndex;
     this._structure = this._structures[this._structureIndex];
 };
