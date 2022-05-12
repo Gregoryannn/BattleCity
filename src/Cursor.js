@@ -13,8 +13,11 @@ function Cursor(eventManager) {
     this._moved = false;
 }
 Cursor.subclass(Sprite);
+
 Cursor.Event = {};
 Cursor.Event.BUILD = 'Cursor.Event.BUILD';
+Cursor.Event.MOVED = 'Cursor.Event.MOVED';
+
 Cursor.prototype.toNormalSpeed = function () {
     Sprite.prototype.toNormalSpeed.call(this);
     this._moved = false;
@@ -41,11 +44,9 @@ Cursor.prototype.move = function () {
     this._moveTimer = 0;
     this._moved = true;
 };
-
 Cursor.prototype.moveHook = function () {
     this._eventManager.fireEvent({ 'name': Cursor.Event.MOVED, 'cursor': this });
 };
-
 Cursor.prototype.updateHook = function () {
     this._blinkTimer.update();
 };
