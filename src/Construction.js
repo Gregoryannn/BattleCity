@@ -9,11 +9,12 @@ function Construction(eventManager) {
     this._cursor.setPosition(new Point(this._x, this._y));
     new CursorController(eventManager, this._cursor);
 
+    new SpriteSerializerController(eventManager, this._structureManager);
+
     this._createBase();
 }
 
 Construction.subclass(Gamefield);
-
 Construction.prototype._createBase = function () {
     var base = new Base(this._eventManager);
     base.setPosition(new Point(this._x + 6 * Globals.UNIT_SIZE, this._y + 12 * Globals.UNIT_SIZE));
