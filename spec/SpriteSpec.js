@@ -61,6 +61,20 @@ describe("Sprite", function () {
         }
     });
 
+    describe("#destroy", function () {
+        it("not destroyed", function () {
+            spyOn(sprite, 'destroyHook');
+            sprite.destroy();
+            expect(sprite.destroyHook).toHaveBeenCalled();
+        });
+
+        it("destroyed", function () {
+            sprite.destroy();
+            spyOn(sprite, 'destroyHook');
+            sprite.destroy();
+            expect(sprite.destroyHook).not.toHaveBeenCalled();
+        });
+    });
 
     it("#doDestroy", function () {
         spyOn(eventManager, 'removeSubscriber');
@@ -81,15 +95,6 @@ describe("Sprite", function () {
             expect(sprite.move).toHaveBeenCalled();
         });
 
-        it("destroyed", function () {
-            spyOn(sprite, 'doDestroy');
-            spyOn(sprite, 'move');
-            sprite.destroy();
-            sprite.update();
-            expect(sprite.doDestroy).toHaveBeenCalled();
-            expect(sprite.move).not.toHaveBeenCalled();
-        });
-    });
 
     describe("#isTurn", function () {
         it("test 1", function () {
