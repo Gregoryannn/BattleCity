@@ -2,8 +2,14 @@ function Sprite(eventManager) {
     Rect.call(this);
 
     this._eventManager = eventManager;
+    this._prevDirection = Sprite.Direction.RIGHT;
     this._direction = Sprite.Direction.RIGHT;
+    this._normalSpeed = 0;
     this._speed = 0;
+    this._destroyed = false;
+    this._turn = false;
+    this._zIndex = 0;
+    this._eventManager.fireEvent({ 'name': Sprite.Event.CREATED, 'sprite': this });
 }
 
 Sprite.subclass(Rect);
@@ -18,67 +24,162 @@ Sprite.Event = {};
 Sprite.Event.MOVED = 'Sprite.Event.MOVED';
 Sprite.Event.CREATED = 'Sprite.Event.CREATED';
 Sprite.Event.DESTROYED = 'Sprite.Event.DESTROYED';
-Sprite.prototype.getDirection = function() {
+
+Sprite.prototype.getDirection = function () {
     return this._direction;
 };
 
-Sprite.prototype.setDirection = function(direction) {
+Sprite.prototype.setDirection = function (direction) {
+    if (direction == this._direction) {
+        return;
+    }
+    this._prevDirection = this._direction;
     this._direction = direction;
+    this._turn = true;
 };
-Sprite.prototype.getSpeed = function() {
+
+Sprite.prototype.getPrevDirection = function () {
+    return this._prevDirection;
+};
+
+Sprite.prototype.isTurn = function () {
+    return this._turn;
+};
+
+Sprite.prototype.getSpeed = function () {
     return this._speed;
 };
 
-Sprite.prototype.setSpeed = function(speed) {
+Sprite.prototype.setSpeed = function (speed) {
     this._speed = speed;
 };
-Sprite.prototype.stop = function() {
+
+Sprite.prototype.getNormalSpeed = function () {
+    return this._normalSpeed;
+};
+
+Sprite.prototype.setNormalSpeed = function (speed) {
+    this._normalSpeed = speed;
+};
+
+Sprite.prototype.toNormalSpeed = function () {
+    this._speed = this._normalSpeed;
+};
+
+Sprite.prototype.stop = function () {
     this._speed = 0;
 };
 
-Sprite.prototype.move = function() {
+Sprite.prototype.move = function () {
     if (this._speed == 0) {
         return;
     }
     this._x = this._getNewX();
     this._y = this._getNewY();
+    this._turn = false;
     this._eventManager.fireEvent({ 'name': Sprite.Event.MOVED, 'sprite': this });
+    this.moveHook();
 };
 
-Sprite.prototype.draw = function(ctx) {
-    ctx.fillStyle = "red";
-    ctx.fillRect(this._x, this._y, this._w, this._h);
+Sprite.prototype.moveHook = function () {
+
+    // Should be overriden by subclasses to add behavior to the move() method.
 };
 
-Sprite.prototype.update = function() {
+/**
+ * Should not be overriden by subclasses. Instead override updateHook().
+ */
+
+Sprite.prototype.update = function () {
+    if (this._destroyed) {
+        this.doDestroy();
+        return;
+    }
+
     this.move();
+    this.updateHook();
+};
+/**
+ * Should be overriden by subclasses. All update operations specific to a
+ * subclass should be placed here.
+ */
+Sprite.prototype.updateHook = function () {
+
 };
 
-Sprite.prototype.destroy = function() {
-    this._eventManager.removeSubscriber(this);
-    this._eventManager.fireEvent({ 'name': Sprite.Event.DESTROYED, 'sprite': this });
+Sprite.prototype.destroy = function () {
+    this._destroyed = true;
 };
 
-Sprite.prototype._getNewX = function() {
-    var result = this._x;
-
-    if (this._direction == Sprite.Direction.RIGHT) {
-        result += this._speed;
-    } else if (this._direction == Sprite.Direction.LEFT) {
-        result -= this._speed;
-    }
-
-    return result;
+Sprite.prototype.isDestroyed = function () {
+    return this._destroyed;
 };
 
-Sprite.prototype._getNewY = function() {
-    var result = this._y;
+/**
+ * Should not be overriden by subclasses. Instead override destroyHook().
+ */
 
-    if (this._direction == Sprite.Direction.UP) {
-        result -= this._speed;
-    } else if (this._direction == Sprite.Direction.DOWN) {
-        result += this._speed;
-    }
-
-    return result;
+Sprite.prototype.doDestroy = function () {
+        this._eventManager.removeSubscriber(this);
+        this._eventManager.fireEvent({ 'name': Sprite.Event.DESTROYED, 'sprite': this });
+        this.destroyHook();
 };
+
+
+/**
+     * Should be overriden by subclasses. All destroy operations specific to a
+     * subclass should be placed here.
+*/
+
+Sprite.prototype.destroyHook = function () {
+
+};
+
+Sprite.prototype.resolveOutOfBounds = function (bounds) {
+        if (this._direction == Sprite.Direction.RIGHT) {
+            this._x = bounds.getRight() - this._w + 1;
+        }
+        else if (this._direction == Sprite.Direction.LEFT) {
+            this._x = bounds.getLeft();
+        }
+        else if (this._direction == Sprite.Direction.UP) {
+            this._y = bounds.getTop();
+        }
+        else if (this._direction == Sprite.Direction.DOWN) {
+            this._y = bounds.getBottom() - this._h + 1;
+        }
+};
+
+Sprite.prototype.setZIndex = function (zIndex) {
+        this._zIndex = zIndex;
+    };
+
+Sprite.prototype.getZIndex = function () {
+        return this._zIndex;
+    };
+
+Sprite.prototype._getNewX = function () {
+        var result = this._x;
+
+        if (this._direction == Sprite.Direction.RIGHT) {
+            result += this._speed;
+        }
+        else if (this._direction == Sprite.Direction.LEFT) {
+            result -= this._speed;
+        }
+
+        return result;
+    };
+
+Sprite.prototype._getNewY = function () {
+        var result = this._y;
+
+        if (this._direction == Sprite.Direction.UP) {
+            result -= this._speed;
+        }
+        else if (this._direction == Sprite.Direction.DOWN) {
+            result += this._speed;
+        }
+
+        return result;
+    };
