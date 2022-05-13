@@ -54,8 +54,6 @@ describe("Tank", function () {
         expect(state.update).toHaveBeenCalled();
     });
 
-
-
     describe("#resolveCollisionWithWall", function () {
         it("tank moves right", function () {
             checkDirection(new Rect(1, 1, 2, 2), new Rect(2, 1, 2, 2), Sprite.Direction.RIGHT, new Point(0, 1));
@@ -207,40 +205,54 @@ describe("Tank", function () {
     });
 
     describe("#notify", function () {
-     describe("TankStateAppearing.Event.END", function () {
-                beforeEach(function () {
-                    tank.setState(new TankStateAppearing(tank));
-                });
-
-                it("state", function () {
-                    tank.notify({ 'name': TankStateAppearing.Event.END, 'tank': tank });
-                    expect(tank.getState() instanceof TankStateInvincible).toBeTruthy();
-                });
-
-                it("direction", function () {
-                    tank.setDirection(Sprite.Direction.DOWN);
-                    tank.notify({ 'name': TankStateAppearing.Event.END, 'tank': tank });
-                    expect(tank.getDirection()).toEqual(Sprite.Direction.UP);
-                });
+        describe("TankStateAppearing.Event.END", function () {
+            beforeEach(function () {
+                tank.setState(new TankStateAppearing(tank));
             });
 
-            it("TankStateInvincible.Event.END", function () {
-                tank.setState(new TankStateInvincible(tank));
-                tank.notify({ 'name': TankStateInvincible.Event.END, 'tank': tank });
-                expect((tank.getState() instanceof TankStateNormal) && !(tank.getState() instanceof TankStateInvincible)).toBeTruthy();
+            it("state", function () {
+                tank.notify({ 'name': TankStateAppearing.Event.END, 'tank': tank });
+                expect(tank.getState() instanceof TankStateInvincible).toBeTruthy();
+            });
+
+            it("direction", function () {
+                tank.setDirection(Sprite.Direction.DOWN);
+                tank.notify({ 'name': TankStateAppearing.Event.END, 'tank': tank });
+                expect(tank.getDirection()).toEqual(Sprite.Direction.UP);
             });
         });
+
+        it("TankStateInvincible.Event.END", function () {
+            tank.setState(new TankStateInvincible(tank));
+            tank.notify({ 'name': TankStateInvincible.Event.END, 'tank': tank });
+            expect((tank.getState() instanceof TankStateNormal) && !(tank.getState() instanceof TankStateInvincible)).toBeTruthy();
+        });
     });
-    describe("Tank", function () {
-        it("should subscribe", function () {
-            var eventManager = new EventManager();
-            spyOn(eventManager, 'addSubscriber');
-            var tank = new Tank(eventManager);
-            expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [
-                Bullet.Event.DESTROYED,
-                CollisionDetector.Event.COLLISION,
-                CollisionDetector.Event.OUT_OF_BOUNDS,
+
+    it('#destroyHook', function () {
+        spyOn(eventManager, 'fireEvent');
+        tank.destroyHook();
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.DESTROYED, 'tank': tank });
+    });
+});
+
+describe("Tank", function () {
+    it("should subscribe", function () {
+        var eventManager = new EventManager();
+        spyOn(eventManager, 'addSubscriber');
+        var tank = new Tank(eventManager);
+        expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [
+            Bullet.Event.DESTROYED,
+            CollisionDetector.Event.COLLISION,
+            CollisionDetector.Event.OUT_OF_BOUNDS,
             TankStateAppearing.Event.END,
-                TankStateInvincible.Event.END]);
+            TankStateInvincible.Event.END]);
+    });
+
+    it("should fire an event when created", function () {
+        var eventManager = new EventManager();
+        spyOn(eventManager, 'fireEvent');
+        var tank = new Tank(eventManager);
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.CREATED, 'tank': tank });
     });
 });

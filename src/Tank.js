@@ -5,8 +5,7 @@ function Tank(eventManager) {
         [Bullet.Event.DESTROYED,
         CollisionDetector.Event.COLLISION,
         CollisionDetector.Event.OUT_OF_BOUNDS,
-            TankStateAppearing.Event.END]);
-
+        TankStateAppearing.Event.END,
         TankStateInvincible.Event.END]);
 
     this._w = Globals.UNIT_SIZE;
@@ -21,10 +20,17 @@ function Tank(eventManager) {
     // turn smoothing sensitivity
     this._turnSmoothSens = Globals.TILE_SIZE - 6;
     this._turnRoundTo = Globals.TILE_SIZE;
+
+    this._eventManager.fireEvent({ 'name': Tank.Event.CREATED, 'tank': this });
 }
+
 Tank.subclass(Sprite);
+
 Tank.Event = {};
 Tank.Event.SHOOT = 'Tank.Event.SHOOT';
+Tank.Event.CREATED = 'Tank.Event.CREATED';
+Tank.Event.DESTROYED = 'Tank.Event.DESTROYED';
+
 Tank.prototype.getState = function () {
     return this._state;
 };
@@ -56,8 +62,6 @@ Tank.prototype.shoot = function () {
     this._bulletShot = true;
     this._eventManager.fireEvent({ 'name': Tank.Event.SHOOT, 'tank': this });
 };
-
-
 Tank.prototype.updateHook = function () {
     this._state.update();
 };
@@ -103,6 +107,11 @@ Tank.prototype.move = function () {
 Tank.prototype.getEventManager = function () {
     return this._eventManager;
 };
+
+Tank.prototype.destroyHook = function () {
+    this._eventManager.fireEvent({ 'name': Tank.Event.DESTROYED, 'tank': this });
+};
+
 Tank.prototype._smoothTurn = function () {
     var val;
 
@@ -135,11 +144,9 @@ Tank.prototype._smoothTurn = function () {
         }
     }
 };
-
 Tank.prototype.draw = function (ctx) {
     this._state.draw(ctx);
 };
-
 Tank.prototype.resolveCollisionWithWall = function (wall) {
     var moveX = 0;
     var moveY = 0;
