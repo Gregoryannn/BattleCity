@@ -83,20 +83,21 @@ describe("AITankController", function () {
             spyOn(random, 'getNumber').andReturn(0.3);
             controller.updateShoot();
             expect(tank.shoot).toHaveBeenCalled();
+    
+            });
+        });
+
+        it("#update", function () {
+            spyOn(controller, 'updateShoot');
+            controller.update();
+            expect(controller.updateShoot).toHaveBeenCalled();
+        });
+
+        describe("#notify", function () {
+            it("Tank.Event.DESTROYED", function () {
+                spyOn(eventManager, 'fireEvent');
+                controller.notify({ 'name': Tank.Event.DESTROYED, 'tank': tank });
+                expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': AITankController.Event.DESTROYED, 'controller': controller });
+            });
         });
     });
-
-    it("#update", function () {
-        spyOn(controller, 'updateShoot');
-        controller.update();
-        expect(controller.updateShoot).toHaveBeenCalled();
-    });
-
-    describe("#notify", function () {
-        it("Tank.Event.DESTROYED", function () {
-            spyOn(eventManager, 'fireEvent');
-            controller.notify({ 'name': Tank.Event.DESTROYED, 'tank': tank });
-            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': AITankController.Event.DESTROYED, 'controller': controller });
-        });
-    });
-});
