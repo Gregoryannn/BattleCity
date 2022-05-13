@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\spec",
+    "\\src"
   ],
-  "SelectedNode": "\\C:\\Users\\asus\\Source\\Repos\\BattleCity888",
+  "SelectedNode": "\\src\\TankStateNormal.js",
   "PreviewInSolutionExplorer": false
 }
