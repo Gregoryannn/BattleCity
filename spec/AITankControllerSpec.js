@@ -1,4 +1,4 @@
-escribe("AITankController", function () {
+describe("AITankController", function () {
     it("should fire event on creation", function () {
         var eventManager = new EventManager();
         spyOn(eventManager, 'fireEvent');
@@ -13,7 +13,6 @@ escribe("AITankController", function () {
         expect(eventManager.addSubscriber).toHaveBeenCalledWith(controller, [Tank.Event.DESTROYED]);
     });
 });
-
 describe("AITankController", function () {
     var eventManager, tank, random, controller;
 
@@ -91,5 +90,13 @@ describe("AITankController", function () {
         spyOn(controller, 'updateShoot');
         controller.update();
         expect(controller.updateShoot).toHaveBeenCalled();
+    });
+
+    describe("#notify", function () {
+        it("Tank.Event.DESTROYED", function () {
+            spyOn(eventManager, 'fireEvent');
+            controller.notify({ 'name': Tank.Event.DESTROYED, 'tank': tank });
+            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': AITankController.Event.DESTROYED, 'controller': controller });
+        });
     });
 });
