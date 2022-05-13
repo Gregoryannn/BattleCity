@@ -11,8 +11,11 @@ function AITankController(tank, random) {
 
     this._eventManager.fireEvent({ 'name': AITankController.Event.CREATED, 'controller': this });
 }
+
 AITankController.Event = {};
 AITankController.Event.CREATED = 'AITankController.Event.CREATED';
+AITankController.Event.DESTROYED = 'AITankController.Event.DESTROYED';
+
 AITankController.prototype.setShootInterval = function (interval) {
     this._shootInterval = interval;
 };
@@ -31,7 +34,6 @@ AITankController.prototype.updateShoot = function () {
 AITankController.prototype.update = function () {
     this.updateShoot();
 };
-
 AITankController.prototype.notify = function (event) {
     if (event.name == Tank.Event.DESTROYED && event.tank === this._tank) {
         this._eventManager.fireEvent({ 'name': AITankController.Event.DESTROYED, 'controller': this });
