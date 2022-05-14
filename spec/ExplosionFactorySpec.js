@@ -3,7 +3,7 @@ describe("ExplosionFactory", function() {
         var eventManager = new EventManager();
         spyOn(eventManager, 'addSubscriber');
         var explosionFactory = new ExplosionFactory(eventManager);
-        expect(eventManager.addSubscriber).toHaveBeenCalledWith(explosionFactory, [Bullet.Event.DESTROYED]);
+        expect(eventManager.addSubscriber).toHaveBeenCalledWith(factory, [Tank.Event.ENEMY_DESTROYED]);
     });
 
     it("default state", function() {

@@ -207,80 +207,93 @@ describe("Tank", function () {
     });
 
     describe("#notify", function () {
-            it("TankStateAppearing.Event.END", function () {
-                spyOn(tank, 'stateAppearingEnd');
-                tank.notify({ 'name': TankStateAppearing.Event.END, 'tank': tank });
-                expect(tank.stateAppearingEnd).toHaveBeenCalled();
-            });
+        it("TankStateAppearing.Event.END", function () {
+            spyOn(tank, 'stateAppearingEnd');
+            tank.notify({ 'name': TankStateAppearing.Event.END, 'tank': tank });
+            expect(tank.stateAppearingEnd).toHaveBeenCalled();
+        });
 
-            it("TankStateInvincible.Event.END", function () {
-                tank.setState(new TankStateInvincible(tank));
-                tank.notify({ 'name': TankStateInvincible.Event.END, 'tank': tank });
-                expect((tank.getState() instanceof TankStateNormal) && !(tank.getState() instanceof TankStateInvincible)).toBeTruthy();
+        it("TankStateInvincible.Event.END", function () {
+            tank.setState(new TankStateInvincible(tank));
+            tank.notify({ 'name': TankStateInvincible.Event.END, 'tank': tank });
+            expect((tank.getState() instanceof TankStateNormal) && !(tank.getState() instanceof TankStateInvincible)).toBeTruthy();
+        });
+    });
+
+    describe("#stateAppearingEnd", function () {
+        beforeEach(function () {
+            tank.setState(new TankStateAppearing(tank));
+        });
+
+        describe("player", function () {
+            it("state", function () {
+                tank.stateAppearingEnd();
+                expect(tank.getState() instanceof TankStateInvincible).toBeTruthy();
+            });
+            it("direction", function () {
+                tank.setDirection(Sprite.Direction.DOWN);
+                tank.stateAppearingEnd();
+                expect(tank.getDirection()).toEqual(Sprite.Direction.UP);
             });
         });
 
-        describe("#stateAppearingEnd", function () {
+        describe("enemy", function () {
             beforeEach(function () {
-                tank.setState(new TankStateAppearing(tank));
+                tank.makeEnemy();
             });
 
-            describe("player", function () {
-                it("state", function () {
-                    tank.stateAppearingEnd();
-                    expect(tank.getState() instanceof TankStateInvincible).toBeTruthy();
-                });
-
-
-                it("direction", function () {
-                    tank.setDirection(Sprite.Direction.DOWN);
-                    tank.stateAppearingEnd();
-                    expect(tank.getDirection()).toEqual(Sprite.Direction.UP);
-                });
+            it("state", function () {
+                tank.stateAppearingEnd();
+                expect(tank.getState() instanceof TankStateNormal).toBeTruthy();
             });
-
-      
-                describe("enemy", function () {
-                    beforeEach(function () {
-                        tank.makeEnemy();
-                    });
-
-                    it("state", function () {
-                        tank.stateAppearingEnd();
-                        expect(tank.getState() instanceof TankStateNormal).toBeTruthy();
-                    });
-
-                    it("direction", function () {
-                        tank.setDirection(Sprite.Direction.UP);
-                        tank.stateAppearingEnd();
-                        expect(tank.getDirection()).toEqual(Sprite.Direction.DOWN);
-                    });
-                });
+            it("direction", function () {
+                tank.setDirection(Sprite.Direction.UP);
+                tank.stateAppearingEnd();
+                expect(tank.getDirection()).toEqual(Sprite.Direction.DOWN);
             });
+        });
+    });
 
-            it('#destroyHook', function () {
+  describe("#destroyHook", function () {
+            beforeEach(function () {
                 spyOn(eventManager, 'fireEvent');
+            });
+
+            it('common', function () {
                 tank.destroyHook();
                 expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.DESTROYED, 'tank': tank });
             });
-        });
-        describe("Tank", function () {
-            it("should subscribe", function () {
-                var eventManager = new EventManager();
-                spyOn(eventManager, 'addSubscriber');
-                var tank = new Tank(eventManager);
-                expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [
-                    Bullet.Event.DESTROYED,
-                    CollisionDetector.Event.COLLISION,
-                    CollisionDetector.Event.OUT_OF_BOUNDS,
-                    TankStateAppearing.Event.END,
-                    TankStateInvincible.Event.END]);
+
+            it('player', function () {
+                tank.destroyHook();
+                expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.PLAYER_DESTROYED, 'tank': tank });
             });
 
-            it("should fire an event when created", function () {
-                var eventManager = new EventManager();
-                spyOn(eventManager, 'fireEvent');
-                var tank = new Tank(eventManager);
-                expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.CREATED, 'tank': tank });
+            it('enemy', function () {
+                tank.makeEnemy();
+                tank.destroyHook();
+                expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.ENEMY_DESTROYED, 'tank': tank });
             });
         });
+    });
+
+    describe("Tank", function () {
+        it("should subscribe", function () {
+            var eventManager = new EventManager();
+            spyOn(eventManager, 'addSubscriber');
+            var tank = new Tank(eventManager);
+            expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [
+                Bullet.Event.DESTROYED,
+                CollisionDetector.Event.COLLISION,
+                CollisionDetector.Event.OUT_OF_BOUNDS,
+                TankStateAppearing.Event.END,
+                TankStateInvincible.Event.END]);
+        });
+
+        it("should fire an event when created", function () {
+            var eventManager = new EventManager();
+            spyOn(eventManager, 'fireEvent');
+            var tank = new Tank(eventManager);
+            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.CREATED, 'tank': tank });
+        });
+    });
