@@ -25,10 +25,10 @@ function Tank(eventManager) {
     this._eventManager.fireEvent({ 'name': Tank.Event.CREATED, 'tank': this });
 }
 Tank.subclass(Sprite);
-
 Tank.Type = {};
 Tank.Type.PLAYER_1 = 'player1';
 Tank.Type.BASIC = 'basic';
+Tank.Type.FAST = 'fast';
 
 Tank.Event = {};
 Tank.Event.SHOOT = 'Tank.Event.SHOOT';
@@ -43,11 +43,9 @@ Tank.prototype.setState = function (state) {
 Tank.prototype.getType = function () {
     return this._type;
 };
-
 Tank.prototype.setType = function (type) {
     this._type = type;
 };
-
 Tank.prototype.setBulletSize = function (size) {
     this._bulletSize = size;
 };
