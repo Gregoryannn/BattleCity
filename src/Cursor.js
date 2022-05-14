@@ -13,11 +13,9 @@ function Cursor(eventManager) {
     this._moved = false;
 }
 Cursor.subclass(Sprite);
-
 Cursor.Event = {};
 Cursor.Event.BUILD = 'Cursor.Event.BUILD';
 Cursor.Event.MOVED = 'Cursor.Event.MOVED';
-
 Cursor.prototype.toNormalSpeed = function () {
     Sprite.prototype.toNormalSpeed.call(this);
     this._moved = false;
@@ -50,8 +48,9 @@ Cursor.prototype.moveHook = function () {
 Cursor.prototype.updateHook = function () {
     this._blinkTimer.update();
 };
+
 Cursor.prototype.draw = function (ctx) {
     if (this._blinkTimer.isVisible()) {
-        ctx.drawImage(ImageManager.getImage('tank_up_1'), this._x, this._y);
+        ctx.drawImage(ImageManager.getImage('tank_player1_up_1'), this._x, this._y);
     }
 };
