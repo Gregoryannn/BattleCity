@@ -33,7 +33,6 @@ EnemyFactory.prototype.nextPosition = function () {
         this._position = 0;
     }
 };
-
 EnemyFactory.prototype.create = function () {
     if (this._noMoreEnemies()) {
         return;
@@ -46,21 +45,21 @@ EnemyFactory.prototype.setInterval = function (interval) {
     this._interval = interval;
     this._timer = this._interval;
 };
+
 EnemyFactory.prototype.createEnemy = function (enemy, position) {
     var tank = new Tank(this._eventManager);
+    tank.makeEnemy();
     tank.setType(enemy.type);
     tank.setPosition(position);
     tank.setState(new TankStateAppearing(tank));
     return tank;
 };
-
 EnemyFactory.prototype.getNextEnemy = function () {
     return this._enemies[this._enemy];
 };
 EnemyFactory.prototype.nextEnemy = function () {
     this._enemy++;
 };
-
 EnemyFactory.prototype._noMoreEnemies = function () {
     return this._enemy >= this._enemies.length;
 };

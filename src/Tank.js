@@ -13,6 +13,7 @@ function Tank(eventManager) {
 
     this._type = Tank.Type.PLAYER_1;
     this._state = new TankStateNormal(this);
+    this._player = true;
 
     this._normalSpeed = 2;
     this._bulletSize = Globals.TILE_SIZE / 2;
@@ -29,7 +30,6 @@ Tank.Type = {};
 Tank.Type.PLAYER_1 = 'player1';
 Tank.Type.BASIC = 'basic';
 Tank.Type.FAST = 'fast';
-
 Tank.Event = {};
 Tank.Event.SHOOT = 'Tank.Event.SHOOT';
 Tank.Event.CREATED = 'Tank.Event.CREATED';
@@ -46,6 +46,15 @@ Tank.prototype.getType = function () {
 Tank.prototype.setType = function (type) {
     this._type = type;
 };
+
+Tank.prototype.isPlayer = function () {
+    return this._player;
+};
+
+Tank.prototype.makeEnemy = function () {
+    this._player = false;
+};
+
 Tank.prototype.setBulletSize = function (size) {
     this._bulletSize = size;
 };
@@ -85,90 +94,101 @@ Tank.prototype.notify = function (event) {
         this.resolveOutOfBounds(event.bounds);
     }
     else if (event.name == TankStateAppearing.Event.END && event.tank === this) {
-        this._state = new TankStateInvincible(this);
-        this._direction = Sprite.Direction.UP;
+        this.stateAppearingEnd();
     }
     else if (event.name == TankStateInvincible.Event.END && event.tank === this) {
         this._state = new TankStateNormal(this);
     }
 };
-Tank.prototype.setTurnSmoothSens = function (sensitivity) {
-    this._turnSmoothSens = sensitivity;
-};
-Tank.prototype.getTurnSmoothSens = function () {
-    return this._turnSmoothSens;
-};
-Tank.prototype.setTurnRoundTo = function (value) {
-    this._turnRoundTo = value;
-};
-Tank.prototype.getTurnRoundTo = function () {
-    return this._turnRoundTo;
-};
-Tank.prototype.move = function () {
-    if (!this._state.canMove()) {
-        return;
-    }
-    if (this._turn) {
-        this._smoothTurn();
-    }
-    Sprite.prototype.move.call(this);
-};
-Tank.prototype.getEventManager = function () {
-    return this._eventManager;
-};
-Tank.prototype.destroyHook = function () {
-    this._eventManager.fireEvent({ 'name': Tank.Event.DESTROYED, 'tank': this });
-};
-Tank.prototype._smoothTurn = function () {
-    var val;
 
-    if (this._direction == Sprite.Direction.UP || this._direction == Sprite.Direction.DOWN) {
-        if (this._prevDirection == Sprite.Direction.RIGHT) {
-            val = this._turnRoundTo - (this._x % this._turnRoundTo);
-            if (val < this._turnSmoothSens) {
-                this._x += val;
+Tank.prototype.stateAppearingEnd = function () {
+    if (this._player) {
+        this._state = new TankStateInvincible(this);
+        this._direction = Sprite.Direction.UP;
+    }
+  else {
+            this._state = new TankStateNormal(this);
+            this._direction = Sprite.Direction.DOWN;
+        }
+    };
+
+    Tank.prototype.setTurnSmoothSens = function (sensitivity) {
+        this._turnSmoothSens = sensitivity;
+    };
+    Tank.prototype.getTurnSmoothSens = function () {
+        return this._turnSmoothSens;
+    };
+    Tank.prototype.setTurnRoundTo = function (value) {
+        this._turnRoundTo = value;
+    };
+    Tank.prototype.getTurnRoundTo = function () {
+        return this._turnRoundTo;
+    };
+    Tank.prototype.move = function () {
+        if (!this._state.canMove()) {
+            return;
+        }
+        if (this._turn) {
+            this._smoothTurn();
+        }
+        Sprite.prototype.move.call(this);
+    };
+    Tank.prototype.getEventManager = function () {
+        return this._eventManager;
+    };
+    Tank.prototype.destroyHook = function () {
+        this._eventManager.fireEvent({ 'name': Tank.Event.DESTROYED, 'tank': this });
+    };
+    Tank.prototype._smoothTurn = function () {
+        var val;
+
+        if (this._direction == Sprite.Direction.UP || this._direction == Sprite.Direction.DOWN) {
+            if (this._prevDirection == Sprite.Direction.RIGHT) {
+                val = this._turnRoundTo - (this._x % this._turnRoundTo);
+                if (val < this._turnSmoothSens) {
+                    this._x += val;
+                }
+            }
+            else if (this._prevDirection == Sprite.Direction.LEFT) {
+                val = this._x % this._turnRoundTo;
+                if (val < this._turnSmoothSens) {
+                    this._x -= val;
+                }
             }
         }
-        else if (this._prevDirection == Sprite.Direction.LEFT) {
-            val = this._x % this._turnRoundTo;
-            if (val < this._turnSmoothSens) {
-                this._x -= val;
+        else {
+            if (this._prevDirection == Sprite.Direction.DOWN) {
+                val = this._turnRoundTo - (this._y % this._turnRoundTo);
+                if (val < this._turnSmoothSens) {
+                    this._y += val;
+                }
+            }
+            else if (this._prevDirection == Sprite.Direction.UP) {
+                val = this._y % this._turnRoundTo;
+                if (val < this._turnSmoothSens) {
+                    this._y -= val;
+                }
             }
         }
-    }
-    else {
-        if (this._prevDirection == Sprite.Direction.DOWN) {
-            val = this._turnRoundTo - (this._y % this._turnRoundTo);
-            if (val < this._turnSmoothSens) {
-                this._y += val;
-            }
+    };
+    Tank.prototype.draw = function (ctx) {
+        this._state.draw(ctx);
+    };
+    Tank.prototype.resolveCollisionWithWall = function (wall) {
+        var moveX = 0;
+        var moveY = 0;
+        if (this._direction == Sprite.Direction.RIGHT) {
+            moveX = this.getRight() - wall.getLeft() + 1;
         }
-        else if (this._prevDirection == Sprite.Direction.UP) {
-            val = this._y % this._turnRoundTo;
-            if (val < this._turnSmoothSens) {
-                this._y -= val;
-            }
+        else if (this._direction == Sprite.Direction.LEFT) {
+            moveX = this.getLeft() - wall.getRight() - 1;
         }
-    }
-};
-Tank.prototype.draw = function (ctx) {
-    this._state.draw(ctx);
-};
-Tank.prototype.resolveCollisionWithWall = function (wall) {
-    var moveX = 0;
-    var moveY = 0;
-    if (this._direction == Sprite.Direction.RIGHT) {
-        moveX = this.getRight() - wall.getLeft() + 1;
-    }
-    else if (this._direction == Sprite.Direction.LEFT) {
-        moveX = this.getLeft() - wall.getRight() - 1;
-    }
-    else if (this._direction == Sprite.Direction.UP) {
-        moveY = this.getTop() - wall.getBottom() - 1;
-    }
-    else if (this._direction == Sprite.Direction.DOWN) {
-        moveY = this.getBottom() - wall.getTop() + 1;
-    }
-    this._x -= moveX;
-    this._y -= moveY;
-};
+        else if (this._direction == Sprite.Direction.UP) {
+            moveY = this.getTop() - wall.getBottom() - 1;
+        }
+        else if (this._direction == Sprite.Direction.DOWN) {
+            moveY = this.getBottom() - wall.getTop() + 1;
+        }
+        this._x -= moveX;
+        this._y -= moveY;
+    };
