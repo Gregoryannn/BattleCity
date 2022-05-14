@@ -21,7 +21,6 @@ describe("AITankController", function () {
         expect(tank.toNormalSpeed).toHaveBeenCalled();
     });
 });
-
 describe("AITankController", function () {
     var eventManager, tank, random, controller;
 
@@ -127,25 +126,21 @@ describe("AITankController", function () {
                 controller.setDirectionUpdateInterval(1);
                 controller.setDirectionUpdateProbability(0.5);
             });
-
             it("random - 0.6", function () {
                 spyOn(random, 'getNumber').andReturn(0.6);
                 controller.updateDirection();
                 expect(tank.setDirection).not.toHaveBeenCalled();
             });
-
             it("random - 0.5", function () {
                 spyOn(random, 'getNumber').andReturn(0.5);
                 controller.updateDirection();
                 expect(tank.setDirection).not.toHaveBeenCalled();
             });
-
             it("random - 0.4", function () {
                 spyOn(random, 'getNumber').andReturn(0.4);
                 controller.updateDirection();
                 expect(tank.setDirection).toHaveBeenCalled();
             });
-
             it("random - 0.3", function () {
                 spyOn(random, 'getNumber').andReturn(0.3);
                 controller.updateDirection();
@@ -164,9 +159,17 @@ describe("AITankController", function () {
 
     describe("#notify", function () {
         it("Tank.Event.DESTROYED", function () {
-            spyOn(eventManager, 'fireEvent');
+            spyOn(controller, 'destroy');
             controller.notify({ 'name': Tank.Event.DESTROYED, 'tank': tank });
-            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': AITankController.Event.DESTROYED, 'controller': controller });
+            expect(controller.destroy).toHaveBeenCalled();
         });
+    });
+
+    it("#destroy", function () {
+        spyOn(eventManager, 'fireEvent');
+        spyOn(eventManager, 'removeSubscriber');
+        controller.destroy();
+        expect(eventManager.removeSubscriber).toHaveBeenCalledWith(controller);
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': AITankController.Event.DESTROYED, 'controller': controller });
     });
 });
