@@ -16,7 +16,6 @@ describe("TankStateNormal", function () {
             state.updateTrackFrame();
             expect(state.getTrackFrame()).toEqual(1);
         });
-
         it("don't animate when tank is not moving", function () {
             tank.setSpeed(0);
             expect(state.getTrackFrame()).toEqual(1);
@@ -31,12 +30,12 @@ describe("TankStateNormal", function () {
         it("RIGHT", function () {
             tank.setDirection(Sprite.Direction.RIGHT);
             state.setTrackFrame(1);
-            expect(state.getImage()).toEqual('tank_right_1');
+            expect(state.getImage()).toEqual('tank_player1_right_1');
         });
         it("LEFT", function () {
             tank.setDirection(Sprite.Direction.LEFT);
             state.setTrackFrame(2);
-            expect(state.getImage()).toEqual('tank_left_2');
+            expect(state.getImage()).toEqual('tank_player1_left_2');
         });
     });
 
