@@ -14,6 +14,7 @@ function Tank(eventManager) {
     this._type = Tank.Type.PLAYER_1;
     this._state = new TankStateNormal(this);
     this._player = true;
+    this._value = 100;
 
     this._normalSpeed = 2;
     this._bulletSize = Globals.TILE_SIZE / 2;
@@ -39,6 +40,15 @@ Tank.Event.ENEMY_DESTROYED = 'Tank.Event.ENEMY_DESTROYED';
 Tank.prototype.getState = function () {
     return this._state;
 };
+
+Tank.prototype.setValue = function (value) {
+    this._value = value;
+};
+
+Tank.prototype.getValue = function () {
+    return this._value;
+};
+
 Tank.prototype.setState = function (state) {
     this._state = state;
 };
@@ -51,11 +61,9 @@ Tank.prototype.setType = function (type) {
 Tank.prototype.isPlayer = function () {
     return this._player;
 };
-
 Tank.prototype.isEnemy = function () {
     return !this._player;
 };
-
 Tank.prototype.makeEnemy = function () {
     this._player = false;
 };
@@ -204,7 +212,6 @@ Tank.prototype.resolveCollisionWithWall = function (wall) {
     this._x -= moveX;
     this._y -= moveY;
 };
-
 Tank.prototype._bulletCollision = function (event) {
     if (event.name != CollisionDetector.Event.COLLISION) {
         return false;

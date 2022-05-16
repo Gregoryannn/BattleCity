@@ -27,17 +27,6 @@ var ImageManager = (function () {
         tank_fast_up_1: null,
         tank_fast_up_2: null,
 
-
-        tank_fast_down_1: null,
-        tank_fast_down_2: null,
-        tank_fast_left_1: null,
-        tank_fast_left_2: null,
-        tank_fast_right_1: null,
-        tank_fast_right_2: null,
-        tank_fast_up_1: null,
-        tank_fast_up_2: null,
-
-
         appear_1: null,
         appear_2: null,
         appear_3: null,
@@ -65,6 +54,8 @@ var ImageManager = (function () {
         wall_steel: null,
 
         base: null,
+
+        points_100: null,
     };
 
     for (var i in images) {
