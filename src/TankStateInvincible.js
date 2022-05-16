@@ -2,11 +2,7 @@ function TankStateInvincible(tank) {
     TankStateNormal.call(this, tank);
 
     this._eventManager = this._tank.getEventManager();
-
-    this._shieldFrame = 1;
-    this._shieldFrameDuration = 2;
-    this._shieldFrameTimer = 0;
-
+    this._shieldAnimation = new Animation([1, 2], 2, true);
     this._stateDuration = 110;
     this._stateTimer = 0;
 }
@@ -18,7 +14,7 @@ TankStateInvincible.Event.END = 'TankStateInvincible.Event.END';
 
 TankStateInvincible.prototype.update = function () {
     TankStateNormal.prototype.update.call(this);
-    this.updateShieldFrame();
+    this._shieldAnimation.update();
     this.updateStateTimer();
 };
 
@@ -28,15 +24,8 @@ TankStateInvincible.prototype.draw = function (ctx) {
 };
 
 TankStateInvincible.prototype.getShieldImage = function () {
-    return 'shield_' + this._shieldFrame;
-};
+    return 'shield_' + this._shieldAnimation.getFrame();
 
-TankStateInvincible.prototype.updateShieldFrame = function () {
-    this._shieldFrameTimer++;
-    if (this._shieldFrameTimer >= this._shieldFrameDuration) {
-        this._shieldFrameTimer = 0;
-        this._shieldFrame = this._shieldFrame == 1 ? 2 : 1;
-    }
 };
 
 TankStateInvincible.prototype.updateStateTimer = function () {
@@ -51,5 +40,5 @@ TankStateInvincible.prototype.setStateDuration = function (duration) {
 };
 
 TankStateInvincible.prototype.setShieldFrameDuration = function (duration) {
-    this._shieldFrameDuration = duration;
+    this._shieldAnimation.setFrameDuration(duration);
 };
