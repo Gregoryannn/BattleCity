@@ -6,10 +6,13 @@ function EnemyFactory(eventManager) {
     this._position = 0;
 
     this._interval = 100;
+    this._interval = 150;
     this._timer = this._interval;
 
     this._enemies = [];
     this._enemy = 0;
+    this._enemyCount = 0;
+    this._enemyCountLimit = 4;
 }
 EnemyFactory.prototype.setEnemies = function (enemies) {
     this._enemies = enemies;
@@ -20,7 +23,6 @@ EnemyFactory.prototype.setPositions = function (positions) {
 EnemyFactory.prototype.update = function () {
     this._timer++;
     if (this._timer > this._interval) {
-        this._timer = 0;
         this.create();
     }
 };
@@ -34,9 +36,10 @@ EnemyFactory.prototype.nextPosition = function () {
     }
 };
 EnemyFactory.prototype.create = function () {
-    if (this._noMoreEnemies()) {
+    if (this._noMoreEnemies() || this._enemyCountLimitReached()) {
         return;
     }
+    this._timer = 0;
     this.createEnemy(this.getNextEnemy(), this.getNextPosition());
     this.nextEnemy();
     this.nextPosition();
@@ -45,13 +48,15 @@ EnemyFactory.prototype.setInterval = function (interval) {
     this._interval = interval;
     this._timer = this._interval;
 };
-
 EnemyFactory.prototype.createEnemy = function (enemy, position) {
     var tank = new Tank(this._eventManager);
     tank.makeEnemy();
     tank.setType(enemy.type);
     tank.setPosition(position);
     tank.setState(new TankStateAppearing(tank));
+
+    this._enemyCount++;
+
     return tank;
 };
 EnemyFactory.prototype.getNextEnemy = function () {
@@ -60,6 +65,21 @@ EnemyFactory.prototype.getNextEnemy = function () {
 EnemyFactory.prototype.nextEnemy = function () {
     this._enemy++;
 };
+EnemyFactory.prototype.getEnemyCount = function () {
+    return this._enemyCount;
+};
+EnemyFactory.prototype.notify = function (event) {
+    if (event.name == Tank.Event.ENEMY_DESTROYED) {
+        this._enemyCount--;
+    }
+};
+
+EnemyFactory.prototype.setEnemyCountLimit = function (limit) {
+    this._enemyCountLimit = limit;
+};
 EnemyFactory.prototype._noMoreEnemies = function () {
     return this._enemy >= this._enemies.length;
+};
+EnemyFactory.prototype._enemyCountLimitReached = function () {
+    return this._enemyCount >= this._enemyCountLimit;
 };
