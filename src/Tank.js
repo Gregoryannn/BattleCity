@@ -36,7 +36,6 @@ Tank.Event.CREATED = 'Tank.Event.CREATED';
 Tank.Event.DESTROYED = 'Tank.Event.DESTROYED';
 Tank.Event.PLAYER_DESTROYED = 'Tank.Event.PLAYER_DESTROYED';
 Tank.Event.ENEMY_DESTROYED = 'Tank.Event.ENEMY_DESTROYED';
-
 Tank.prototype.getState = function () {
     return this._state;
 };
@@ -52,6 +51,11 @@ Tank.prototype.setType = function (type) {
 Tank.prototype.isPlayer = function () {
     return this._player;
 };
+
+Tank.prototype.isEnemy = function () {
+    return !this._player;
+};
+
 Tank.prototype.makeEnemy = function () {
     this._player = false;
 };
@@ -89,6 +93,9 @@ Tank.prototype.notify = function (event) {
     }
     else if (event.name == CollisionDetector.Event.COLLISION && event.initiator === this && event.sprite instanceof Wall) {
         this.resolveCollisionWithWall(event.sprite);
+    }
+    else if (this._bulletCollision(event)) {
+        this.destroy();
     }
     else if (event.name == CollisionDetector.Event.OUT_OF_BOUNDS && event.sprite === this) {
         this.resolveOutOfBounds(event.bounds);
@@ -134,7 +141,6 @@ Tank.prototype.move = function () {
 Tank.prototype.getEventManager = function () {
     return this._eventManager;
 };
-
 Tank.prototype.destroyHook = function () {
     this._eventManager.fireEvent({ 'name': Tank.Event.DESTROYED, 'tank': this });
 
@@ -145,7 +151,6 @@ Tank.prototype.destroyHook = function () {
         this._eventManager.fireEvent({ 'name': Tank.Event.ENEMY_DESTROYED, 'tank': this });
     }
 };
-
 Tank.prototype._smoothTurn = function () {
     var val;
 
@@ -198,4 +203,24 @@ Tank.prototype.resolveCollisionWithWall = function (wall) {
     }
     this._x -= moveX;
     this._y -= moveY;
+};
+
+Tank.prototype._bulletCollision = function (event) {
+    if (event.name != CollisionDetector.Event.COLLISION) {
+        return false;
+    }
+    if (!(event.initiator instanceof Bullet)) {
+        return false;
+    }
+    if (event.sprite !== this) {
+        return false;
+    }
+    var otherTank = event.initiator.getTank();
+    if (otherTank === this) {
+        return false;
+    }
+    if (this.isEnemy() && otherTank.isEnemy()) {
+        return false;
+    }
+    return true;
 };

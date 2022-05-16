@@ -218,6 +218,47 @@ describe("Tank", function () {
             tank.notify({ 'name': TankStateInvincible.Event.END, 'tank': tank });
             expect((tank.getState() instanceof TankStateNormal) && !(tank.getState() instanceof TankStateInvincible)).toBeTruthy();
         });
+
+        describe("CollisionDetector.Event.COLLISION", function () {
+            describe("bullet", function () {
+                it("other's bullet", function () {
+                    spyOn(tank, 'destroy');
+                    var otherTank = new Tank(eventManager);
+                    var bullet = new Bullet(eventManager, otherTank);
+                    tank.notify({
+                        'name': CollisionDetector.Event.COLLISION,
+                        'initiator': bullet,
+                        'sprite': tank
+                    });
+                    expect(tank.destroy).toHaveBeenCalled();
+                });
+
+                it("own bullet", function () {
+                    spyOn(tank, 'destroy');
+                    var bullet = new Bullet(eventManager, tank);
+                    tank.notify({
+                        'name': CollisionDetector.Event.COLLISION,
+                        'initiator': bullet,
+                        'sprite': tank
+                    });
+                    expect(tank.destroy).not.toHaveBeenCalled();
+                });
+
+                it("enemy shot enemy", function () {
+                    spyOn(tank, 'destroy');
+                    tank.makeEnemy();
+                    var otherTank = new Tank(eventManager);
+                    otherTank.makeEnemy();
+                    var bullet = new Bullet(eventManager, otherTank);
+                    tank.notify({
+                        'name': CollisionDetector.Event.COLLISION,
+                        'initiator': bullet,
+                        'sprite': tank
+                    });
+                    expect(tank.destroy).not.toHaveBeenCalled();
+                });
+            });
+        });
     });
 
     describe("#stateAppearingEnd", function () {
@@ -254,46 +295,45 @@ describe("Tank", function () {
         });
     });
 
-  describe("#destroyHook", function () {
-            beforeEach(function () {
-                spyOn(eventManager, 'fireEvent');
-            });
-
-            it('common', function () {
-                tank.destroyHook();
-                expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.DESTROYED, 'tank': tank });
-            });
-
-            it('player', function () {
-                tank.destroyHook();
-                expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.PLAYER_DESTROYED, 'tank': tank });
-            });
-
-            it('enemy', function () {
-                tank.makeEnemy();
-                tank.destroyHook();
-                expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.ENEMY_DESTROYED, 'tank': tank });
-            });
-        });
-    });
-
-    describe("Tank", function () {
-        it("should subscribe", function () {
-            var eventManager = new EventManager();
-            spyOn(eventManager, 'addSubscriber');
-            var tank = new Tank(eventManager);
-            expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [
-                Bullet.Event.DESTROYED,
-                CollisionDetector.Event.COLLISION,
-                CollisionDetector.Event.OUT_OF_BOUNDS,
-                TankStateAppearing.Event.END,
-                TankStateInvincible.Event.END]);
-        });
-
-        it("should fire an event when created", function () {
-            var eventManager = new EventManager();
+    describe("#destroyHook", function () {
+        beforeEach(function () {
             spyOn(eventManager, 'fireEvent');
-            var tank = new Tank(eventManager);
-            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.CREATED, 'tank': tank });
+        });
+
+        it('common', function () {
+            tank.destroyHook();
+            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.DESTROYED, 'tank': tank });
+        });
+
+        it('player', function () {
+            tank.destroyHook();
+            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.PLAYER_DESTROYED, 'tank': tank });
+        });
+
+        it('enemy', function () {
+            tank.makeEnemy();
+            tank.destroyHook();
+            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.ENEMY_DESTROYED, 'tank': tank });
         });
     });
+});
+describe("Tank", function () {
+    it("should subscribe", function () {
+        var eventManager = new EventManager();
+        spyOn(eventManager, 'addSubscriber');
+        var tank = new Tank(eventManager);
+        expect(eventManager.addSubscriber).toHaveBeenCalledWith(tank, [
+            Bullet.Event.DESTROYED,
+            CollisionDetector.Event.COLLISION,
+            CollisionDetector.Event.OUT_OF_BOUNDS,
+            TankStateAppearing.Event.END,
+            TankStateInvincible.Event.END]);
+    });
+
+    it("should fire an event when created", function () {
+        var eventManager = new EventManager();
+        spyOn(eventManager, 'fireEvent');
+        var tank = new Tank(eventManager);
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Tank.Event.CREATED, 'tank': tank });
+    });
+});
