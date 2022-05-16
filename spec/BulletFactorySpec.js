@@ -1,10 +1,39 @@
 describe("BulletFactory", function() {
 
-    it("should subscribe", function() {
-        var eventManager = new EventManager();
-        spyOn(eventManager, 'addSubscriber');
-        var factory = new BulletFactory(eventManager);
-        expect(eventManager.addSubscriber).toHaveBeenCalledWith(factory, [Tank.Event.SHOOT]);
+    describe("CollisionDetector.Event.COLLISION", function () {
+        it("wall", function () {
+            var wall = new Wall(eventManager);
+            spyOn(bullet, 'destroy');
+            bullet.notify({
+                'name': CollisionDetector.Event.COLLISION,
+                'initiator': bullet,
+                'sprite': wall
+            });
+            expect(bullet.destroy).toHaveBeenCalled();
+        });
+
+        describe("tank", function () {
+            it("other tank", function () {
+                var otherTank = new Tank(eventManager);
+                spyOn(bullet, 'destroy');
+                bullet.notify({
+                    'name': CollisionDetector.Event.COLLISION,
+                    'initiator': bullet,
+                    'sprite': otherTank
+                });
+                expect(bullet.destroy).toHaveBeenCalled();
+            });
+
+            it("bullet's tank", function () {
+                spyOn(bullet, 'destroy');
+                bullet.notify({
+                    'name': CollisionDetector.Event.COLLISION,
+                    'initiator': bullet,
+                    'sprite': tank
+                });
+                expect(bullet.destroy).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe("#createBullet", function() {
