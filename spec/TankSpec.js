@@ -258,6 +258,19 @@ describe("Tank", function () {
                     });
                     expect(tank.destroy).not.toHaveBeenCalled();
                 });
+
+                it("invincible", function () {
+                    tank.setState(new TankStateInvincible(tank));
+                    spyOn(tank, 'destroy');
+                    var otherTank = new Tank(eventManager);
+                    var bullet = new Bullet(eventManager, otherTank);
+                    tank.notify({
+                        'name': CollisionDetector.Event.COLLISION,
+                        'initiator': bullet,
+                        'sprite': tank
+                    });
+                    expect(tank.destroy).not.toHaveBeenCalled();
+                });
             });
         });
     });
@@ -318,6 +331,7 @@ describe("Tank", function () {
         });
     });
 });
+
 describe("Tank", function () {
     it("should subscribe", function () {
         var eventManager = new EventManager();

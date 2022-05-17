@@ -26,6 +26,7 @@ function Tank(eventManager) {
 
     this._eventManager.fireEvent({ 'name': Tank.Event.CREATED, 'tank': this });
 }
+
 Tank.subclass(Sprite);
 Tank.Type = {};
 Tank.Type.PLAYER_1 = 'player1';
@@ -37,6 +38,7 @@ Tank.Event.CREATED = 'Tank.Event.CREATED';
 Tank.Event.DESTROYED = 'Tank.Event.DESTROYED';
 Tank.Event.PLAYER_DESTROYED = 'Tank.Event.PLAYER_DESTROYED';
 Tank.Event.ENEMY_DESTROYED = 'Tank.Event.ENEMY_DESTROYED';
+
 Tank.prototype.getState = function () {
     return this._state;
 };
@@ -92,9 +94,11 @@ Tank.prototype.shoot = function () {
     this._bulletShot = true;
     this._eventManager.fireEvent({ 'name': Tank.Event.SHOOT, 'tank': this });
 };
+
 Tank.prototype.updateHook = function () {
     this._state.update();
 };
+
 Tank.prototype.notify = function (event) {
     if (event.name == Bullet.Event.DESTROYED && event.tank == this) {
         this._bulletShot = false;
@@ -102,8 +106,8 @@ Tank.prototype.notify = function (event) {
     else if (event.name == CollisionDetector.Event.COLLISION && event.initiator === this && event.sprite instanceof Wall) {
         this.resolveCollisionWithWall(event.sprite);
     }
-    else if (this._bulletCollision(event)) {
-        this.destroy();
+    else if (this._bulletCollision(event) && this._state.canBeDestroyed()) {
+           this.destroy();
     }
     else if (event.name == CollisionDetector.Event.OUT_OF_BOUNDS && event.sprite === this) {
         this.resolveOutOfBounds(event.bounds);
@@ -115,6 +119,7 @@ Tank.prototype.notify = function (event) {
         this._state = new TankStateNormal(this);
     }
 };
+
 Tank.prototype.stateAppearingEnd = function () {
     if (this._player) {
         this._state = new TankStateInvincible(this);
@@ -125,18 +130,23 @@ Tank.prototype.stateAppearingEnd = function () {
         this._direction = Sprite.Direction.DOWN;
     }
 };
+
 Tank.prototype.setTurnSmoothSens = function (sensitivity) {
     this._turnSmoothSens = sensitivity;
 };
+
 Tank.prototype.getTurnSmoothSens = function () {
     return this._turnSmoothSens;
 };
+
 Tank.prototype.setTurnRoundTo = function (value) {
     this._turnRoundTo = value;
 };
+
 Tank.prototype.getTurnRoundTo = function () {
     return this._turnRoundTo;
 };
+
 Tank.prototype.move = function () {
     if (!this._state.canMove()) {
         return;
@@ -146,9 +156,11 @@ Tank.prototype.move = function () {
     }
     Sprite.prototype.move.call(this);
 };
+
 Tank.prototype.getEventManager = function () {
     return this._eventManager;
 };
+
 Tank.prototype.destroyHook = function () {
     this._eventManager.fireEvent({ 'name': Tank.Event.DESTROYED, 'tank': this });
 
@@ -159,6 +171,7 @@ Tank.prototype.destroyHook = function () {
         this._eventManager.fireEvent({ 'name': Tank.Event.ENEMY_DESTROYED, 'tank': this });
     }
 };
+
 Tank.prototype._smoothTurn = function () {
     var val;
 
@@ -191,9 +204,11 @@ Tank.prototype._smoothTurn = function () {
         }
     }
 };
+
 Tank.prototype.draw = function (ctx) {
     this._state.draw(ctx);
 };
+
 Tank.prototype.resolveCollisionWithWall = function (wall) {
     var moveX = 0;
     var moveY = 0;
@@ -212,6 +227,7 @@ Tank.prototype.resolveCollisionWithWall = function (wall) {
     this._x -= moveX;
     this._y -= moveY;
 };
+
 Tank.prototype._bulletCollision = function (event) {
     if (event.name != CollisionDetector.Event.COLLISION) {
         return false;
