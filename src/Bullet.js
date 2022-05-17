@@ -13,8 +13,11 @@ Bullet.Event = {};
 Bullet.Event.DESTROYED = 'Bullet.Event.DESTROYED';
 
 Bullet.prototype.notify = function (event) {
-        if (this._outOfBounds(event) || this._wallCollision(event) || this._tankCollision(event)) {
-            this.destroy();
+    if (this._outOfBounds(event) || this._wallCollision(event)) {
+        this.destroy();
+    }
+    else if (this._tankCollision(event)) {
+        this._explode = event.sprite.canBeDestroyed();            this.destroy();
         }
         else if (this._bulletCollision(event)) {
             this._explode = false;
