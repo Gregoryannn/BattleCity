@@ -5,13 +5,19 @@ function Bullet(eventManager, tank) {
         CollisionDetector.Event.COLLISION
     ]);
     this._tank = tank;
+    this._explode = true;
 }
+
 Bullet.subclass(Sprite);
 Bullet.Event = {};
 Bullet.Event.DESTROYED = 'Bullet.Event.DESTROYED';
 
 Bullet.prototype.notify = function (event) {
-        if (this._outOfBounds(event) || this._wallCollision(event) || this._tankCollision(event) || this._bulletCollision(event)) {
+        if (this._outOfBounds(event) || this._wallCollision(event) || this._tankCollision(event)) {
+            this.destroy();
+        }
+        else if (this._bulletCollision(event)) {
+            this._explode = false;
             this.destroy();
         }
     };
@@ -27,6 +33,15 @@ Bullet.prototype.notify = function (event) {
     Bullet.prototype.getTank = function () {
         return this._tank;
     };
+
+    Bullet.prototype.setExplode = function (value) {
+        this._explode = value;
+    };
+
+    Bullet.prototype.shouldExplode = function () {
+        return this._explode;
+    };
+
     Bullet.prototype._outOfBounds = function (event) {
         return event.name == CollisionDetector.Event.OUT_OF_BOUNDS && event.sprite === this;
     };
@@ -61,7 +76,6 @@ Bullet.prototype.notify = function (event) {
         }
         return true;
     };
-
     Bullet.prototype._bulletCollision = function (event) {
         if (event.name != CollisionDetector.Event.COLLISION) {
             return false;
