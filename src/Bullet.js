@@ -16,7 +16,7 @@ Bullet.prototype.notify = function (event) {
     if (this._outOfBounds(event) || this._wallCollision(event)) {
         this.destroy();
     }
-    else if (this._tankCollision(event)) {
+    else if (this._tankCollision(event) && event.sprite.isCollidable()) {
         this._explode = event.sprite.canBeDestroyed();            this.destroy();
         }
         else if (this._bulletCollision(event)) {

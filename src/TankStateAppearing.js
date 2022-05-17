@@ -23,8 +23,11 @@ TankStateAppearing.prototype.canMove = function () {
 TankStateAppearing.prototype.canShoot = function () {
     return false;
 };
-
 TankStateAppearing.prototype.canBeDestroyed = function () {
+    return false;
+};
+
+TankStateAppearing.prototype.isCollidable = function () {
     return false;
 };
 
