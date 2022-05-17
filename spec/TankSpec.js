@@ -22,6 +22,7 @@ describe("Tank", function () {
         expect(tank.getType()).toEqual(Tank.Type.PLAYER_1);
         expect(tank.isPlayer()).toBeTruthy();
         expect(tank.getValue()).toEqual(100);
+        expect(tank.isFlashing()).toBeFalsy();
     });
 
     describe("#shoot", function () {
@@ -331,7 +332,6 @@ describe("Tank", function () {
         });
     });
 });
-
 describe("Tank", function () {
     it("should subscribe", function () {
         var eventManager = new EventManager();

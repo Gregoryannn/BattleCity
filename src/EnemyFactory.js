@@ -13,10 +13,8 @@ function EnemyFactory(eventManager) {
     this._enemyCount = 0;
     this._enemyCountLimit = 4;
 }
-
 EnemyFactory.Event = {};
 EnemyFactory.Event.ENEMY_CREATED = 'EnemyFactory.Event.ENEMY_CREATED';
-
 EnemyFactory.prototype.setEnemies = function (enemies) {
     this._enemies = enemies;
 };
@@ -57,6 +55,10 @@ EnemyFactory.prototype.createEnemy = function (enemy, position) {
     tank.setType(enemy.type);
     tank.setPosition(position);
     tank.setState(new TankStateAppearing(tank));
+
+    if (enemy.flashing) {
+        tank.startFlashing();
+    }
 
     this._eventManager.fireEvent({ 'name': EnemyFactory.Event.ENEMY_CREATED, 'enemy': tank });
     this._enemyCount++;
