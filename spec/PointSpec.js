@@ -1,17 +1,32 @@
-describe("Point", function() {
-    it("default state", function() {
-        var point = new Point();
-        expect(point.getX()).toEqual(0);
-        expect(point.getY()).toEqual(0);
-        expect(point.getPosition()).toEqual(new Point(0, 0));
-
+describe("Points", function () {
+    it("#update", function () {
+        var eventManager = new EventManager();
+        var points = new Points(eventManager);
+        spyOn(points, 'destroy');
+        points.setDuration(3);
+        points.updateTimer();
+        expect(points.destroy).not.toHaveBeenCalled();
+        points.updateTimer();
+        expect(points.destroy).not.toHaveBeenCalled();
+        points.updateTimer();
+        expect(points.destroy).not.toHaveBeenCalled();
+        points.updateTimer();
+        expect(points.destroy).toHaveBeenCalled();
     });
 
-    it("should know its coordinates", function() {
-        var X = 1,
-            Y = 2;
-        var point = new Point(X, Y);
-        expect(point.getX()).toEqual(X);
-        expect(point.getY()).toEqual(Y);
+    it("#updateHook", function () {
+        var eventManager = new EventManager();
+        var points = new Points(eventManager);
+        spyOn(points, 'updateTimer');
+        points.updateHook();
+        expect(points.updateTimer).toHaveBeenCalled();
+    });
+
+    it("#destroyHook", function () {
+        var eventManager = new EventManager();
+        spyOn(eventManager, 'fireEvent');
+        var points = new Points(eventManager);
+        points.destroyHook();
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Points.Event.DESTROYED, 'points': points });
     });
 });

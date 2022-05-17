@@ -1,6 +1,6 @@
 function EnemyFactory(eventManager) {
     this._eventManager = eventManager;
-    this._eventManager.addSubscriber(this, [Tank.Event.ENEMY_DESTROYED]);
+    this._eventManager.addSubscriber(this, [Points.Event.DESTROYED]);
 
     this._positions = [];
     this._position = 0;
@@ -69,7 +69,7 @@ EnemyFactory.prototype.getEnemyCount = function () {
     return this._enemyCount;
 };
 EnemyFactory.prototype.notify = function (event) {
-    if (event.name == Tank.Event.ENEMY_DESTROYED) {
+    if (event.name == Points.Event.DESTROYED) {
         this._enemyCount--;
     }
 };
