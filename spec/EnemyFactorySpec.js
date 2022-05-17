@@ -47,7 +47,7 @@ describe("EnemyFactory", function () {
         factory.setEnemyCountLimit(2);
         factory.setInterval(3);
         factory.update();
-          expect(factory.getEnemyCount()).toEqual(1);
+        expect(factory.getEnemyCount()).toEqual(1);
         factory.update();
         expect(factory.getEnemyCount()).toEqual(1);
         factory.update();
@@ -124,6 +124,7 @@ describe("EnemyFactory", function () {
 
     it("#createEnemy", function () {
         var eventManager = new EventManager();
+        spyOn(eventManager, 'fireEvent');
         var factory = new EnemyFactory(eventManager);
         var enemy = { type: Tank.Type.BASIC };
         var position = new Point(1, 2);
@@ -139,6 +140,8 @@ describe("EnemyFactory", function () {
         expect(tank.getPosition()).toEqual(position);
         expect(tank.getState() instanceof TankStateAppearing).toBeTruthy();
         expect(tank.isPlayer()).toBeFalsy();
+
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': EnemyFactory.Event.ENEMY_CREATED, 'enemy': tank });
     });
 
     describe("#notify", function () {
@@ -149,8 +152,11 @@ describe("EnemyFactory", function () {
             var position = new Point(1, 2);
             var tank = factory.createEnemy(enemy, position);
 
+            expect(factory.getEnemyCount()).toEqual(1);
+
             var points = new Points(eventManager);
             factory.notify({ 'name': Points.Event.DESTROYED, 'points': points });
+
             expect(factory.getEnemyCount()).toEqual(0);
         });
     });
