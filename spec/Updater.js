@@ -1,11 +1,10 @@
-function Painter(spriteContainer) {
+function Updater(spriteContainer) {
     this._spriteContainer = spriteContainer;
 }
 
-
-Painter.prototype.draw = function (ctx) {
+Updater.prototype.update = function () {
         var sprites = this._spriteContainer.getSprites();
         sprites.forEach(function (sprite) {
-            sprite.draw(ctx);
+            sprite.update();
         });
     };
