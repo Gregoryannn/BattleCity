@@ -18,11 +18,12 @@ function Tank(eventManager) {
     this._flashing = false;
 
     this._normalSpeed = 2;
-    this._bulletSize = Globals.TILE_SIZE / 2;
-    this._bulletSpeed = 4;
+    this._bulletSize = 10;
+    this._bulletSpeed = 5;
+    this._trackAnimationDuration = 2;
 
     // turn smoothing sensitivity
-    this._turnSmoothSens = Globals.TILE_SIZE - 6;
+    this._turnSmoothSens = Globals.TILE_SIZE - 1;
     this._turnRoundTo = Globals.TILE_SIZE;
 
     this._eventManager.fireEvent({ 'name': Tank.Event.CREATED, 'tank': this });
@@ -39,7 +40,6 @@ Tank.Event.DESTROYED = 'Tank.Event.DESTROYED';
 Tank.Event.PLAYER_DESTROYED = 'Tank.Event.PLAYER_DESTROYED';
 Tank.Event.ENEMY_DESTROYED = 'Tank.Event.ENEMY_DESTROYED';
 Tank.Event.FLASHING_TANK_DESTROYED = 'Tank.Event.FLASHING_TANK_DESTROYED';
-
 Tank.prototype.getState = function () {
     return this._state;
 };
@@ -163,7 +163,6 @@ Tank.prototype.destroyHook = function () {
         this._eventManager.fireEvent({ 'name': Tank.Event.FLASHING_TANK_DESTROYED, 'tank': this });
     }
 };
-
 Tank.prototype.canBeDestroyed = function () {
     return this._state.canBeDestroyed();
 };
@@ -176,6 +175,15 @@ Tank.prototype.isFlashing = function () {
 Tank.prototype.startFlashing = function () {
     this._flashing = true;
 };
+
+Tank.prototype.getTrackAnimationDuration = function () {
+    return this._trackAnimationDuration;
+};
+
+Tank.prototype.setTrackAnimationDuration = function (duration) {
+    this._trackAnimationDuration = duration;
+};
+
 Tank.prototype._smoothTurn = function () {
     var val;
 
