@@ -38,6 +38,8 @@ Tank.Event.CREATED = 'Tank.Event.CREATED';
 Tank.Event.DESTROYED = 'Tank.Event.DESTROYED';
 Tank.Event.PLAYER_DESTROYED = 'Tank.Event.PLAYER_DESTROYED';
 Tank.Event.ENEMY_DESTROYED = 'Tank.Event.ENEMY_DESTROYED';
+Tank.Event.FLASHING_TANK_DESTROYED = 'Tank.Event.FLASHING_TANK_DESTROYED';
+
 Tank.prototype.getState = function () {
     return this._state;
 };
@@ -156,22 +158,24 @@ Tank.prototype.destroyHook = function () {
     else {
         this._eventManager.fireEvent({ 'name': Tank.Event.ENEMY_DESTROYED, 'tank': this });
     }
+
+    if (this._flashing) {
+        this._eventManager.fireEvent({ 'name': Tank.Event.FLASHING_TANK_DESTROYED, 'tank': this });
+    }
 };
+
 Tank.prototype.canBeDestroyed = function () {
     return this._state.canBeDestroyed();
 };
 Tank.prototype.isCollidable = function () {
     return this._state.isCollidable();
 };
-
 Tank.prototype.isFlashing = function () {
     return this._flashing;
 };
-
 Tank.prototype.startFlashing = function () {
     this._flashing = true;
 };
-
 Tank.prototype._smoothTurn = function () {
     var val;
 
