@@ -11,6 +11,7 @@ function Level(eventManager) {
     new TankExplosionFactory(eventManager);
     new PointsFactory(eventManager);
     new Score(eventManager);
+    this._freezeTimer = new FreezeTimer(eventManager);
 
     this._aiControllersContainer = new AITankControllerContainer(eventManager);
     new AITankControllerFactory(eventManager);
@@ -42,7 +43,9 @@ Level.prototype.update = function () {
     Gamefield.prototype.update.call(this);
     this._enemyFactory.update();
     this._aiControllersContainer.update();
+    this._freezeTimer.update();
 };
+
 Level.prototype._createPowerUpFactory = function () {
     var powerUpFactory = new PowerUpFactory(this._eventManager);
 
