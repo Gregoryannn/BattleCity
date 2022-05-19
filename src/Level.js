@@ -20,8 +20,9 @@ function Level(eventManager) {
     this._enemyFactory.setPositions([
 
         new Point(this._x + 6 * Globals.UNIT_SIZE, this._y),
-        new Point(this._x, this._y),
         new Point(this._x + 12 * Globals.UNIT_SIZE, this._y),
+        new Point(this._x, this._y),
+
     ]);
 
     this._enemyFactory.setEnemies([
