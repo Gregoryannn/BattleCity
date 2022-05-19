@@ -16,10 +16,15 @@ SpriteContainer.prototype.containsSprite = function (sprite) {
 SpriteContainer.prototype.getSprites = function () {
     return this._sprites;
 };
-
 SpriteContainer.prototype.getEnemyTanks = function () {
     return this._sprites.filter(function (sprite) {
         return sprite instanceof Tank && sprite.isEnemy();
+    });
+};
+
+SpriteContainer.prototype.getWalls = function () {
+    return this._sprites.filter(function (sprite) {
+        return sprite instanceof Wall;
     });
 };
 
