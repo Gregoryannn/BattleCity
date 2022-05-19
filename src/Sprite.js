@@ -9,6 +9,7 @@ function Sprite(eventManager) {
     this._destroyed = false;
     this._turn = false;
     this._zIndex = 0;
+    this._pauseListener = new PauseListener(this._eventManager);
 
     this._eventManager.fireEvent({ 'name': Sprite.Event.CREATED, 'sprite': this });
 }
@@ -70,11 +71,9 @@ Sprite.prototype.move = function () {
     this._eventManager.fireEvent({ 'name': Sprite.Event.MOVED, 'sprite': this });
     this.moveHook();
 };
-
 Sprite.prototype.moveHook = function () {
     // Should be overriden by subclasses to add behavior to the move() method.
 };
-
 /**
  * Should not be overriden by subclasses. Instead override updateHook().
  */
@@ -85,8 +84,13 @@ Sprite.prototype.update = function () {
     }
 
     this.move();
+    if (!this.isPaused()) {
+        this.move();
+    }
+
     this.updateHook();
 };
+
 /**
  * Should be overriden by subclasses. All update operations specific to a
  * subclass should be placed here.
@@ -94,14 +98,19 @@ Sprite.prototype.update = function () {
 Sprite.prototype.updateHook = function () {
 
 };
+Sprite.prototype.destroy = function () {
+    this._destroyed = true;
+};
+Sprite.prototype.isDestroyed = function () {
+    return this._destroyed;
+};
 /**
  * Should not be overriden by subclasses. Instead override destroyHook().
  */
-Sprite.prototype.destroy = function () {
-    if (this._destroyed) {
-        return;
-    }
-    this._destroyed = true;
+Sprite.prototype.doDestroy = function () {
+    this._pauseListener.destroy();
+    this._eventManager.removeSubscriber(this);
+    this._eventManager.fireEvent({ 'name': Sprite.Event.DESTROYED, 'sprite': this });
     this.destroyHook();
 };
 /**
@@ -110,14 +119,6 @@ Sprite.prototype.destroy = function () {
  */
 Sprite.prototype.destroyHook = function () {
 
-};
-
-Sprite.prototype.isDestroyed = function () {
-    return this._destroyed;
-};
-Sprite.prototype.doDestroy = function () {
-    this._eventManager.removeSubscriber(this);
-    this._eventManager.fireEvent({ 'name': Sprite.Event.DESTROYED, 'sprite': this });
 };
 Sprite.prototype.resolveOutOfBounds = function (bounds) {
     if (this._direction == Sprite.Direction.RIGHT) {
@@ -139,6 +140,16 @@ Sprite.prototype.setZIndex = function (zIndex) {
 Sprite.prototype.getZIndex = function () {
     return this._zIndex;
 };
+
+Sprite.prototype.isPaused = function () {
+    return this._pauseListener.isPaused();
+};
+
+Sprite.prototype.setPauseListener = function (listener) {
+    this._pauseListener.destroy();
+    this._pauseListener = listener;
+};
+
 Sprite.prototype._getNewX = function () {
     var result = this._x;
 

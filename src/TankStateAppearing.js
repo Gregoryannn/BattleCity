@@ -8,7 +8,12 @@ TankStateAppearing.Event.END = 'TankStateAppearing.Event.END';
 TankStateAppearing.prototype.getImage = function () {
     return 'appear_' + this._animation.getFrame();
 };
+
 TankStateAppearing.prototype.update = function () {
+    if (this._tank.isPaused()) {
+        return;
+    }
+
     this._animation.update();
     if (this._animation.isCompleted()) {
         this._eventManager.fireEvent({ 'name': TankStateAppearing.Event.END, 'tank': this._tank });
@@ -26,11 +31,9 @@ TankStateAppearing.prototype.canShoot = function () {
 TankStateAppearing.prototype.canBeDestroyed = function () {
     return false;
 };
-
 TankStateAppearing.prototype.isCollidable = function () {
     return false;
 };
-
 TankStateAppearing.prototype.setFrames = function (frames) {
     this._animation.setFrames(frames);
 };

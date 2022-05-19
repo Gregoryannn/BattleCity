@@ -65,20 +65,29 @@ describe("TankStateNormal", function () {
     });
 
     describe("#update", function () {
-        it("#update", function () {
-            spyOn(state, 'updateTrackAnimation');
-            spyOn(state, 'updateFlash');
-            state.update();
-            expect(state.updateTrackAnimation).toHaveBeenCalled();
-            expect(state.updateFlash).toHaveBeenCalled();
+            it("normal", function () {
+                spyOn(state, 'updateTrackAnimation');
+                spyOn(state, 'updateFlash');
+                state.update();
+                expect(state.updateTrackAnimation).toHaveBeenCalled();
+                expect(state.updateFlash).toHaveBeenCalled();
+            });
+
+            it("pause", function () {
+                eventManager.fireEvent({ 'name': Pause.Event.START });
+                spyOn(state, 'updateTrackAnimation');
+                spyOn(state, 'updateFlash');
+                state.update();
+                expect(state.updateTrackAnimation).not.toHaveBeenCalled();
+                expect(state.updateFlash).toHaveBeenCalled();
+            });
+        });
+
+        it("#canMove", function () {
+            expect(state.canMove()).toBeTruthy();
+        });
+
+        it("#canShoot", function () {
+            expect(state.canShoot()).toBeTruthy();
         });
     });
-
-    it("#canMove", function () {
-        expect(state.canMove()).toBeTruthy();
-    });
-
-    it("#canShoot", function () {
-        expect(state.canShoot()).toBeTruthy();
-    });
-});

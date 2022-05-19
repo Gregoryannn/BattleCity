@@ -150,40 +150,64 @@ describe("AITankController", function () {
         });
     });
 
-    it("#update", function () {
-        spyOn(controller, 'updateShoot');
-        spyOn(controller, 'updateDirection');
-        controller.update();
-        expect(controller.updateShoot).toHaveBeenCalled();
-        expect(controller.updateDirection).toHaveBeenCalled();
-    });
+        describe("#update", function () {
+            it("normal", function () {
+                spyOn(controller, 'updateShoot');
+                spyOn(controller, 'updateDirection');
+                controller.update();
+                expect(controller.updateShoot).toHaveBeenCalled();
+                expect(controller.updateDirection).toHaveBeenCalled();
+            });
 
-    describe("#notify", function () {
-        it("Tank.Event.DESTROYED", function () {
-            spyOn(controller, 'destroy');
-            controller.notify({ 'name': Tank.Event.DESTROYED, 'tank': tank });
-            expect(controller.destroy).toHaveBeenCalled();
+            it("pause", function () {
+                spyOn(controller, 'updateShoot');
+                spyOn(controller, 'updateDirection');
+                eventManager.fireEvent({ 'name': Pause.Event.START });
+                controller.update();
+                expect(controller.updateShoot).not.toHaveBeenCalled();
+                expect(controller.updateDirection).not.toHaveBeenCalled();
+            });
+
+            it("freeze", function () {
+                spyOn(controller, 'updateShoot');
+                spyOn(controller, 'updateDirection');
+                controller.freeze();
+                controller.update();
+                expect(controller.updateShoot).not.toHaveBeenCalled();
+                expect(controller.updateDirection).not.toHaveBeenCalled();
+            });
         });
 
-        it("PowerUpHandler.Event.FREEZE", function () {
-            controller.notify({ 'name': PowerUpHandler.Event.FREEZE });
-            expect(controller.isFreezed()).toBeTruthy();
-            expect(tank.getSpeed()).toEqual(0);
+        describe("#notify", function () {
+            it("Tank.Event.DESTROYED", function () {
+                spyOn(controller, 'destroy');
+                controller.notify({ 'name': Tank.Event.DESTROYED, 'tank': tank });
+                expect(controller.destroy).toHaveBeenCalled();
+            });
+
+            it("PowerUpHandler.Event.FREEZE", function () {
+                controller.notify({ 'name': PowerUpHandler.Event.FREEZE });
+                expect(controller.isFreezed()).toBeTruthy();
+                expect(tank.getSpeed()).toEqual(0);
+            });
+
+            it("FreezeTimer.Event.UNFREEZE", function () {
+                controller.freeze();
+                controller.notify({ 'name': FreezeTimer.Event.UNFREEZE });
+                expect(controller.isFreezed()).toBeFalsy();
+                expect(tank.getSpeed()).toEqual(tank.getNormalSpeed());
+            });
         });
 
-        it("FreezeTimer.Event.UNFREEZE", function () {
-            controller.freeze();
-            controller.notify({ 'name': FreezeTimer.Event.UNFREEZE });
-            expect(controller.isFreezed()).toBeFalsy();
-            expect(tank.getSpeed()).toEqual(tank.getNormalSpeed());
+        it("#destroy", function () {
+            spyOn(eventManager, 'fireEvent');
+            spyOn(eventManager, 'removeSubscriber');
+            var pauseListener = new PauseListener(eventManager);
+            spyOn(pauseListener, 'destroy');
+            controller.setPauseListener(pauseListener);
+            controller.destroy();
+            expect(eventManager.removeSubscriber).toHaveBeenCalledWith(controller);
+            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': AITankController.Event.DESTROYED, 'controller': controller });
+            expect(pauseListener.destroy).toHaveBeenCalled();
         });
     });
-
-    it("#destroy", function () {
-        spyOn(eventManager, 'fireEvent');
-        spyOn(eventManager, 'removeSubscriber');
-        controller.destroy();
-        expect(eventManager.removeSubscriber).toHaveBeenCalledWith(controller);
-        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': AITankController.Event.DESTROYED, 'controller': controller });
-    });
-});

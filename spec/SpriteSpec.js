@@ -61,29 +61,18 @@ describe("Sprite", function () {
         }
     });
 
-    describe("#destroy", function () {
-        it("not destroyed", function () {
-            spyOn(sprite, 'destroyHook');
-            sprite.destroy();
-            expect(sprite.destroyHook).toHaveBeenCalled();
-        });
-
-        it("destroyed", function () {
-            sprite.destroy();
-            spyOn(sprite, 'destroyHook');
-            sprite.destroy();
-            expect(sprite.destroyHook).not.toHaveBeenCalled();
-        });
-    });
-
     it("#doDestroy", function () {
         spyOn(eventManager, 'removeSubscriber');
         spyOn(eventManager, 'fireEvent');
         spyOn(sprite, 'destroyHook');
+        var pauseListener = new PauseListener(eventManager);
+        spyOn(pauseListener, 'destroy');
+        sprite.setPauseListener(pauseListener);
         sprite.doDestroy();
         expect(eventManager.removeSubscriber).toHaveBeenCalledWith(sprite);
         expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Sprite.Event.DESTROYED, 'sprite': sprite });
         expect(sprite.destroyHook).toHaveBeenCalled();
+        expect(pauseListener.destroy).toHaveBeenCalled();
     });
 
     describe("#update", function () {
@@ -95,6 +84,22 @@ describe("Sprite", function () {
             expect(sprite.move).toHaveBeenCalled();
         });
 
+        it("destroyed", function () {
+            spyOn(sprite, 'doDestroy');
+            spyOn(sprite, 'move');
+            sprite.destroy();
+            sprite.update();
+            expect(sprite.doDestroy).toHaveBeenCalled();
+            expect(sprite.move).not.toHaveBeenCalled();
+        });
+
+        it("pause", function () {
+            eventManager.fireEvent({ 'name': Pause.Event.START });
+            spyOn(sprite, 'move');
+            sprite.update();
+            expect(sprite.move).not.toHaveBeenCalled();
+        });
+    });
 
     describe("#isTurn", function () {
         it("test 1", function () {

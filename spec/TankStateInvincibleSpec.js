@@ -65,12 +65,18 @@ describe("TankStateNormal", function () {
     });
 
     describe("#update", function () {
-        it("#update", function () {
-            spyOn(state, 'updateTrackAnimation');
-            spyOn(state, 'updateFlash');
+        it("normal", function () {
+            spyOn(state, 'updateStateTimer');
             state.update();
-            expect(state.updateTrackAnimation).toHaveBeenCalled();
-            expect(state.updateFlash).toHaveBeenCalled();
+            expect(state.updateStateTimer).toHaveBeenCalled();
+        });
+
+        it("pause", function () {
+            eventManager.fireEvent({ 'name': Pause.Event.START });
+            spyOn(state, 'updateStateTimer');
+            state.update();
+            expect(state.updateStateTimer).not.toHaveBeenCalled();
+        });
         });
     });
 

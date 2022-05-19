@@ -1,11 +1,11 @@
 function TankStateNormal(tank) {
     this._tank = tank;
     this._trackAnimation = new Animation([1, 2], this._tank.getTrackAnimationDuration(), true);
+
     this._flashDuration = 7;
     this._flashTimer = 0;
     this._flashed = true;
 }
-
 TankStateNormal.prototype.getImage = function () {
     var image = 'tank_' + this._tank.getType() + '_' + this._tank.getDirection() + '_' + this._trackAnimation.getFrame();
     if (this._tank.isFlashing() && this._flashed) {
@@ -15,7 +15,9 @@ TankStateNormal.prototype.getImage = function () {
 };
 
 TankStateNormal.prototype.update = function () {
-    this.updateTrackAnimation();
+    if (!this._tank.isPaused()) {
+        this.updateTrackAnimation();
+    }
     this.updateFlash();
 };
 
@@ -43,19 +45,15 @@ TankStateNormal.prototype.isCollidable = function () {
 TankStateNormal.prototype.getTrackFrame = function () {
     return this._trackAnimation.getFrame();
 };
-
 TankStateNormal.prototype.setFlashDuration = function (duration) {
     this._flashDuration = duration;
 };
-
 TankStateNormal.prototype.isFlashed = function () {
     return this._flashed;
 };
-
 TankStateNormal.prototype.setFlashed = function (value) {
     this._flashed = value;
 };
-
 TankStateNormal.prototype.updateFlash = function () {
     this._flashTimer++;
     if (this._flashTimer >= this._flashDuration) {

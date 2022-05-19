@@ -2,6 +2,8 @@ function EnemyFactory(eventManager) {
     this._eventManager = eventManager;
     this._eventManager.addSubscriber(this, [Points.Event.DESTROYED]);
 
+    this._pauseListener = new PauseListener(this._eventManager);
+
     this._positions = [];
     this._position = 0;
 
@@ -21,7 +23,12 @@ EnemyFactory.prototype.setEnemies = function (enemies) {
 EnemyFactory.prototype.setPositions = function (positions) {
     this._positions = positions;
 };
+
 EnemyFactory.prototype.update = function () {
+    if (this._pauseListener.isPaused()) {
+        return;
+    }
+
     this._timer++;
     if (this._timer > this._interval) {
         this.create();
@@ -82,11 +89,9 @@ EnemyFactory.prototype.nextEnemy = function () {
 EnemyFactory.prototype.getEnemyCount = function () {
     return this._enemyCount;
 };
-
 EnemyFactory.prototype.getEnemiesToCreateCount = function () {
     return this._enemies.length - this._enemy;
 };
-
 EnemyFactory.prototype.notify = function (event) {
     if (event.name == Points.Event.DESTROYED) {
         this._enemyCount--;

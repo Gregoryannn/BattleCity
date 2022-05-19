@@ -2,8 +2,10 @@ function AITankController(tank, random) {
     this._tank = tank;
     this._random = random;
     this._eventManager = this._tank.getEventManager();
+    this._pauseListener = new PauseListener(this._eventManager);
 
-    this._eventManager.addSubscriber(this, [Tank.Event.DESTROYED]);
+    this._eventManager.addSubscriber(this,
+        [Tank.Event.DESTROYED, PowerUpHandler.Event.FREEZE, FreezeTimer.Event.UNFREEZE]);
 
     this._tank.toNormalSpeed();
 
@@ -16,8 +18,9 @@ function AITankController(tank, random) {
     this._directionUpdateProbability = 0.5;
 
     this._eventManager.fireEvent({ 'name': AITankController.Event.CREATED, 'controller': this });
-}
 
+    this._freezed = false;
+}
 AITankController.Event = {};
 AITankController.Event.CREATED = 'AITankController.Event.CREATED';
 AITankController.Event.DESTROYED = 'AITankController.Event.DESTROYED';
@@ -36,15 +39,12 @@ AITankController.prototype.updateShoot = function () {
         }
     }
 };
-
 AITankController.prototype.setDirectionUpdateInterval = function (interval) {
     this._directionUpdateInterval = interval;
 };
-
 AITankController.prototype.setDirectionUpdateProbability = function (probability) {
     this._directionUpdateProbability = probability;
 };
-
 AITankController.prototype.updateDirection = function () {
     this._directionTimer++;
     if (this._directionTimer >= this._directionUpdateInterval) {
@@ -56,12 +56,42 @@ AITankController.prototype.updateDirection = function () {
 };
 
 AITankController.prototype.update = function () {
-    this.updateShoot();
-    this.updateDirection();
-};
+        if (this._freezed || this._pauseListener.isPaused()) {
+            return;
+        }
+        this.updateShoot();
+        this.updateDirection();
+    };
+    AITankController.prototype.notify = function (event) {
+        if (event.name == Tank.Event.DESTROYED && event.tank === this._tank) {
+            this.destroy();
+        }
+        else if (event.name == PowerUpHandler.Event.FREEZE) {
+            this.freeze();
+        }
+        else if (event.name == FreezeTimer.Event.UNFREEZE) {
+            this.unfreeze();
+        }
+    };
 
-AITankController.prototype.notify = function (event) {
-    if (event.name == Tank.Event.DESTROYED && event.tank === this._tank) {
+    AITankController.prototype.destroy = function () {
+        this._pauseListener.destroy();
+        this._eventManager.removeSubscriber(this);
         this._eventManager.fireEvent({ 'name': AITankController.Event.DESTROYED, 'controller': this });
-    }
-};
+    };
+    AITankController.prototype.isFreezed = function () {
+        return this._freezed;
+    };
+    AITankController.prototype.freeze = function () {
+        this._freezed = true;
+        this._tank.stop();
+    };
+    AITankController.prototype.unfreeze = function () {
+        this._freezed = false;
+        this._tank.toNormalSpeed();
+    };
+
+    AITankController.prototype.setPauseListener = function (listener) {
+        this._pauseListener.destroy();
+        this._pauseListener = listener;
+    };
