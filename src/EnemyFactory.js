@@ -82,6 +82,11 @@ EnemyFactory.prototype.nextEnemy = function () {
 EnemyFactory.prototype.getEnemyCount = function () {
     return this._enemyCount;
 };
+
+EnemyFactory.prototype.getEnemiesToCreateCount = function () {
+    return this._enemies.length - this._enemy;
+};
+
 EnemyFactory.prototype.notify = function (event) {
     if (event.name == Points.Event.DESTROYED) {
         this._enemyCount--;

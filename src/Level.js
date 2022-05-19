@@ -6,7 +6,6 @@ function Level(eventManager) {
     var playerTankFactory = new PlayerTankFactory(eventManager);
     playerTankFactory.setAppearPosition(new Point(this._x + 4 * Globals.UNIT_SIZE, this._y + 12 * Globals.UNIT_SIZE));
     playerTankFactory.create();
-
     new BulletFactory(eventManager);
     new BulletExplosionFactory(eventManager);
     new TankExplosionFactory(eventManager);
@@ -18,13 +17,10 @@ function Level(eventManager) {
     new AITankControllerFactory(eventManager);
     this._enemyFactory = new EnemyFactory(eventManager);
     this._enemyFactory.setPositions([
-
         new Point(this._x + 6 * Globals.UNIT_SIZE, this._y),
         new Point(this._x + 12 * Globals.UNIT_SIZE, this._y),
         new Point(this._x, this._y),
-
     ]);
-
     this._enemyFactory.setEnemies([
         { type: Tank.Type.BASIC, flashing: true },
         { type: Tank.Type.FAST },
@@ -34,12 +30,12 @@ function Level(eventManager) {
         { type: Tank.Type.BASIC },
     ]);
 
+    this._enemyFactoryView = new EnemyFactoryView(this._enemyFactory);
+
     this._createPowerUpFactory();
 
     var baseWallBuilder = new BaseWallBuilder();
-
     baseWallBuilder.setWallPositions([
-
         new Point(this._x + 11 * Globals.TILE_SIZE, this._y + 25 * Globals.TILE_SIZE),
         new Point(this._x + 11 * Globals.TILE_SIZE, this._y + 24 * Globals.TILE_SIZE),
         new Point(this._x + 11 * Globals.TILE_SIZE, this._y + 23 * Globals.TILE_SIZE),
@@ -49,7 +45,6 @@ function Level(eventManager) {
         new Point(this._x + 14 * Globals.TILE_SIZE, this._y + 24 * Globals.TILE_SIZE),
         new Point(this._x + 14 * Globals.TILE_SIZE, this._y + 25 * Globals.TILE_SIZE),
     ]);
-
     baseWallBuilder.setSpriteContainer(this._spriteContainer);
 
     var powerUpHandler = new PowerUpHandler(eventManager);
@@ -62,16 +57,18 @@ function Level(eventManager) {
     var serializer = new SpriteSerializer(eventManager);
     serializer.unserializeSprites(map);
 }
-
 Level.subclass(Gamefield);
 Level.prototype.update = function () {
-
     Gamefield.prototype.update.call(this);
     this._enemyFactory.update();
     this._aiControllersContainer.update();
     this._freezeTimer.update();
     this._shovelHandler.update();
+};
 
+Level.prototype.draw = function (ctx) {
+    Gamefield.prototype.draw.call(this, ctx);
+    this._enemyFactoryView.draw(ctx);
 };
 
 Level.prototype._createPowerUpFactory = function () {
@@ -88,7 +85,6 @@ Level.prototype._createPowerUpFactory = function () {
     var powerUpRow4Y = this._y + 10 * Globals.UNIT_SIZE + 17;
 
     powerUpFactory.setPositions([
-
         new Point(powerUpCol1X, powerUpRow1Y),
         new Point(powerUpCol2X, powerUpRow1Y),
         new Point(powerUpCol3X, powerUpRow1Y),
