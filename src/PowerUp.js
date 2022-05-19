@@ -7,13 +7,12 @@ function PowerUp(eventManager) {
 
     this._type = PowerUp.Type.GRENADE;
     this._blinkTimer = new BlinkTimer(7);
+    this._value = 500;
 }
 
 PowerUp.subclass(Sprite);
-
 PowerUp.Event = {};
 PowerUp.Event.DESTROYED = 'PowerUp.Event.DESTROYED';
-
 PowerUp.Type = {};
 PowerUp.Type.GRENADE = 'grenade';
 PowerUp.Type.HELMET = 'helmet';
@@ -24,9 +23,16 @@ PowerUp.Type.TIMER = 'timer';
 PowerUp.prototype.setType = function (type) {
     this._type = type;
 };
-
 PowerUp.prototype.getType = function () {
     return this._type;
+};
+
+PowerUp.prototype.setValue = function (value) {
+    this._value = value;
+};
+
+PowerUp.prototype.getValue = function () {
+    return this._value;
 };
 
 PowerUp.prototype.draw = function (ctx) {
@@ -40,17 +46,14 @@ PowerUp.prototype.updateHook = function () {
 PowerUp.prototype.getImage = function () {
     return 'powerup_' + this._type;
 };
-
 PowerUp.prototype.notify = function (event) {
     if (this._collidedWithPlayer(event)) {
         this.destroy();
     }
 };
-
 PowerUp.prototype.destroyHook = function () {
     this._eventManager.fireEvent({ 'name': PowerUp.Event.DESTROYED, 'powerUp': this });
 };
-
 PowerUp.prototype._collidedWithPlayer = function (event) {
     if (event.name != CollisionDetector.Event.COLLISION) {
         return false;
