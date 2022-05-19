@@ -32,10 +32,14 @@ TankStateInvincible.prototype.updateStateTimer = function () {
 TankStateInvincible.prototype.setStateDuration = function (duration) {
     this._stateDuration = duration;
 };
+
+TankStateInvincible.prototype.getStateDuration = function () {
+    return this._stateDuration;
+};
+
 TankStateInvincible.prototype.setShieldFrameDuration = function (duration) {
     this._shieldAnimation.setFrameDuration(duration);
 };
-
 TankStateInvincible.prototype.canBeDestroyed = function () {
     return false;
 };

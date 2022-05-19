@@ -8,6 +8,7 @@ function PowerUp(eventManager) {
     this._type = PowerUp.Type.GRENADE;
     this._blinkTimer = new BlinkTimer(7);
     this._value = 500;
+    this._playerTank = null;
 }
 
 PowerUp.subclass(Sprite);
@@ -26,15 +27,12 @@ PowerUp.prototype.setType = function (type) {
 PowerUp.prototype.getType = function () {
     return this._type;
 };
-
 PowerUp.prototype.setValue = function (value) {
     this._value = value;
 };
-
 PowerUp.prototype.getValue = function () {
     return this._value;
 };
-
 PowerUp.prototype.draw = function (ctx) {
     if (this._blinkTimer.isVisible()) {
         ctx.drawImage(ImageManager.getImage(this.getImage()), this._x, this._y);
@@ -46,14 +44,25 @@ PowerUp.prototype.updateHook = function () {
 PowerUp.prototype.getImage = function () {
     return 'powerup_' + this._type;
 };
+
 PowerUp.prototype.notify = function (event) {
     if (this._collidedWithPlayer(event)) {
+        this._playerTank = event.initiator;
         this.destroy();
     }
 };
 PowerUp.prototype.destroyHook = function () {
     this._eventManager.fireEvent({ 'name': PowerUp.Event.DESTROYED, 'powerUp': this });
 };
+
+PowerUp.prototype.setPlayerTank = function (tank) {
+    this._playerTank = tank;
+};
+
+PowerUp.prototype.getPlayerTank = function () {
+    return this._playerTank;
+};
+
 PowerUp.prototype._collidedWithPlayer = function (event) {
     if (event.name != CollisionDetector.Event.COLLISION) {
         return false;

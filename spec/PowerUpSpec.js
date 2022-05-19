@@ -19,6 +19,7 @@ describe("PowerUp", function () {
                     'sprite': powerUp
                 });
                 expect(powerUp.destroy).toHaveBeenCalled();
+                expect(powerUp.getPlayerTank()).toEqual(player);
             });
         });
     });
