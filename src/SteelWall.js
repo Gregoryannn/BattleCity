@@ -1,13 +1,14 @@
 function SteelWall(eventManager) {
-    Wall.call(this, eventManager);
-}
+    function SteelWall(eventManager) {
+        Wall.call(this, eventManager);
+        this._invincibleForNormalBullets = true;
+    }
 
-SteelWall.subclass(Wall);
+    SteelWall.subclass(Wall);
+    SteelWall.prototype.getClassName = function () {
+        return 'SteelWall';
+    };
 
-SteelWall.prototype.getClassName = function () {
-    return 'SteelWall';
-};
-
-SteelWall.prototype.draw = function (ctx) {
-    ctx.drawImage(ImageManager.getImage('wall_steel'), this._x, this._y);
-};
+  SteelWall.prototype.getImage = function () {
+            return 'wall_steel';
+        };
