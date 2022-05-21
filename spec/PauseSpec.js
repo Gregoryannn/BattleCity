@@ -3,8 +3,7 @@ describe("Pause", function () {
         var eventManager = new EventManager();
         spyOn(eventManager, 'addSubscriber');
         var pause = new Pause(eventManager);
-        expect(eventManager.addSubscriber).toHaveBeenCalledWith(pause,
-            [Keyboard.Event.KEY_PRESSED, Keyboard.Event.KEY_RELEASED]);
+        expect(eventManager.addSubscriber).toHaveBeenCalledWith(pause, [Keyboard.Event.KEY_PRESSED]);
     });
 
     describe("#notify", function () {
@@ -16,29 +15,18 @@ describe("Pause", function () {
             expect(pause.keyPressed).toHaveBeenCalledWith(Keyboard.Key.P);
         });
 
-        it("Keyboard.Event.KEY_RELEASED", function () {
-            var eventManager = new EventManager();
-            var pause = new Pause(eventManager);
-            spyOn(pause, 'keyReleased');
-            pause.notify({ 'name': Keyboard.Event.KEY_RELEASED, 'key': Keyboard.Key.P });
-            expect(pause.keyReleased).toHaveBeenCalledWith(Keyboard.Key.P);
-        });
     });
 
     it("#keyPressed and #keyReleased", function () {
-        var eventManager = new EventManager();
-        spyOn(eventManager, 'fireEvent');
-        var pause = new Pause(eventManager);
+        it("#keyPressed", function () {
+            var eventManager = new EventManager();
+            spyOn(eventManager, 'fireEvent');
+            var pause = new Pause(eventManager);
 
-        pause.keyPressed(Keyboard.Key.P);
-        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Pause.Event.START });
+            pause.keyPressed(Keyboard.Key.P);
+            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Pause.Event.START });
 
-        eventManager.fireEvent.reset();
-        pause.keyPressed(Keyboard.Key.P);
-        expect(eventManager.fireEvent).not.toHaveBeenCalled();
-
-        pause.keyReleased(Keyboard.Key.P);
-        pause.keyPressed(Keyboard.Key.P);
-        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Pause.Event.END });
+            pause.keyPressed(Keyboard.Key.P);
+            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Pause.Event.END });
+        });
     });
-});
