@@ -1,56 +1,26 @@
-describe("BulletFactory", function() {
-
-    describe("CollisionDetector.Event.COLLISION", function () {
-        it("wall", function () {
-            var wall = new Wall(eventManager);
-            spyOn(bullet, 'destroy');
-            bullet.notify({
-                'name': CollisionDetector.Event.COLLISION,
-                'initiator': bullet,
-                'sprite': wall
-            });
-            expect(bullet.destroy).toHaveBeenCalled();
-        });
-
-        describe("tank", function () {
-            it("other tank", function () {
-                var otherTank = new Tank(eventManager);
-                spyOn(bullet, 'destroy');
-                bullet.notify({
-                    'name': CollisionDetector.Event.COLLISION,
-                    'initiator': bullet,
-                    'sprite': otherTank
-                });
-                expect(bullet.destroy).toHaveBeenCalled();
-            });
-
-            it("bullet's tank", function () {
-                spyOn(bullet, 'destroy');
-                bullet.notify({
-                    'name': CollisionDetector.Event.COLLISION,
-                    'initiator': bullet,
-                    'sprite': tank
-                });
-                expect(bullet.destroy).not.toHaveBeenCalled();
-            });
-        });
+describe("BulletFactory", function () {
+    it("should subscribe", function () {
+        var eventManager = new EventManager();
+        spyOn(eventManager, 'addSubscriber');
+        var factory = new BulletFactory(eventManager);
+        expect(eventManager.addSubscriber).toHaveBeenCalledWith(factory, [Tank.Event.SHOOT]);
     });
 
-    describe("#createBullet", function() {
-        it("RIGHT", function() {
-            checkDirection(new Point(0, 0), new Point(32, 14), Sprite.Direction.RIGHT);
+    describe("#createBullet", function () {
+        it("RIGHT", function () {
+            checkDirection(new Point(0, 0), new Point(30, 14), Sprite.Direction.RIGHT);
         });
 
-        it("LEFT", function() {
-            checkDirection(new Point(32, 0), new Point(31, 14), Sprite.Direction.LEFT);
+        it("LEFT", function () {
+            checkDirection(new Point(32, 0), new Point(33, 14), Sprite.Direction.LEFT);
         });
 
-        it("UP", function() {
-            checkDirection(new Point(0, 32), new Point(14, 31), Sprite.Direction.UP);
+        it("UP", function () {
+            checkDirection(new Point(0, 32), new Point(14, 33), Sprite.Direction.UP);
         });
 
-        it("DOWN", function() {
-            checkDirection(new Point(0, 0), new Point(14, 32), Sprite.Direction.DOWN);
+        it("DOWN", function () {
+            checkDirection(new Point(0, 0), new Point(14, 30), Sprite.Direction.DOWN);
         });
 
         function checkDirection(tankPosition, bulletPosition, direction) {
@@ -67,7 +37,6 @@ describe("BulletFactory", function() {
             tank.setDirection(direction);
             tank.setBulletSize(BULLET_SIZE);
             tank.setBulletSpeed(BULLET_SPEED);
-
             var bullet = new Bullet(eventManager, tank);
             bullet.setPosition(bulletPosition);
             bullet.setDimensions(BULLET_SIZE, BULLET_SIZE);
@@ -75,11 +44,10 @@ describe("BulletFactory", function() {
             bullet.setSpeed(BULLET_SPEED);
 
             expect(factory.createBullet(tank)).toEqual(bullet);
-
         }
     });
 
-    it("should create a bullet when tank shoots", function() {
+    it("should create a bullet when tank shoots", function () {
         var eventManager = new EventManager();
         var factory = new BulletFactory(eventManager);
         spyOn(factory, 'createBullet');
@@ -87,5 +55,4 @@ describe("BulletFactory", function() {
         factory.notify({ 'name': Tank.Event.SHOOT, 'tank': tank });
         expect(factory.createBullet).toHaveBeenCalledWith(tank);
     });
-
 });

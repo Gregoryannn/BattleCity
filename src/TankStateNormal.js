@@ -11,6 +11,9 @@ TankStateNormal.prototype.getImage = function () {
     if (this._tank.isFlashing() && this._flashed) {
         image += '_f';
     }
+    if (this._tank.getUpgradeLevel()) {
+        image += '_s' + this._tank.getUpgradeLevel();
+    }
     return image;
 };
 
@@ -20,7 +23,6 @@ TankStateNormal.prototype.update = function () {
     }
     this.updateFlash();
 };
-
 TankStateNormal.prototype.updateTrackAnimation = function () {
     if (this._tank.getSpeed() == 0) {
         return;

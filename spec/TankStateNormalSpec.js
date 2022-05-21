@@ -62,32 +62,37 @@ describe("TankStateNormal", function () {
             state.setFlashed(true);
             expect(state.getImage()).toEqual('tank_player1_right_1_f');
         });
+        it("upgrade 1", function () {
+            tank.setDirection(Sprite.Direction.RIGHT);
+            tank.upgrade();
+            expect(state.getImage()).toEqual('tank_player1_right_1_s1');
+        });
     });
 
     describe("#update", function () {
-            it("normal", function () {
-                spyOn(state, 'updateTrackAnimation');
-                spyOn(state, 'updateFlash');
-                state.update();
-                expect(state.updateTrackAnimation).toHaveBeenCalled();
-                expect(state.updateFlash).toHaveBeenCalled();
-            });
-
-            it("pause", function () {
-                eventManager.fireEvent({ 'name': Pause.Event.START });
-                spyOn(state, 'updateTrackAnimation');
-                spyOn(state, 'updateFlash');
-                state.update();
-                expect(state.updateTrackAnimation).not.toHaveBeenCalled();
-                expect(state.updateFlash).toHaveBeenCalled();
-            });
+        it("normal", function () {
+            spyOn(state, 'updateTrackAnimation');
+            spyOn(state, 'updateFlash');
+            state.update();
+            expect(state.updateTrackAnimation).toHaveBeenCalled();
+            expect(state.updateFlash).toHaveBeenCalled();
         });
 
-        it("#canMove", function () {
-            expect(state.canMove()).toBeTruthy();
-        });
-
-        it("#canShoot", function () {
-            expect(state.canShoot()).toBeTruthy();
+        it("pause", function () {
+            eventManager.fireEvent({ 'name': Pause.Event.START });
+            spyOn(state, 'updateTrackAnimation');
+            spyOn(state, 'updateFlash');
+            state.update();
+            expect(state.updateTrackAnimation).not.toHaveBeenCalled();
+            expect(state.updateFlash).toHaveBeenCalled();
         });
     });
+
+    it("#canMove", function () {
+        expect(state.canMove()).toBeTruthy();
+    });
+
+    it("#canShoot", function () {
+        expect(state.canShoot()).toBeTruthy();
+    });
+});
