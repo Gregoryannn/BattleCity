@@ -13,6 +13,7 @@ BulletFactory.prototype.createBullet = function (tank) {
     bullet.setDimensions(tank.getBulletSize(), tank.getBulletSize());
     bullet.setDirection(tank.getDirection());
     bullet.setSpeed(tank.getBulletSpeed());
+    bullet.setType(tank.getBulletType());
 
     return bullet;
 };
@@ -21,7 +22,7 @@ BulletFactory.prototype._getBulletPosition = function (tank) {
     var direction = tank.getDirection();
 
     if (direction == Sprite.Direction.RIGHT) {
-        x = tank.getRight() + 1;
+        x = tank.getRight() - 1;
         y = tank.getTop() + tank.getHeight() / 2 - tank.getBulletSize() / 2;
     }
     else if (direction == Sprite.Direction.LEFT) {
