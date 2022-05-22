@@ -8,20 +8,15 @@ function Base(eventManager) {
 
     this._hit = false;
 }
-
 Base.subclass(Sprite);
-
 Base.Event = {};
 Base.Event.HIT = 'Base.Event.HIT';
-
 Base.prototype.getClassName = function () {
     return 'Base';
 };
-
 Base.prototype.draw = function (ctx) {
     ctx.drawImage(ImageManager.getImage(this.getImage()), this._x, this._y);
 };
-
 Base.prototype.getImage = function () {
     var image = 'base';
     if (this._hit) {
@@ -29,8 +24,6 @@ Base.prototype.getImage = function () {
     }
     return image;
 };
-
-
 Base.prototype.notify = function (event) {
     if (this._isHitByBullet(event)) {
         this.hit();
@@ -38,12 +31,14 @@ Base.prototype.notify = function (event) {
 };
 
 Base.prototype.hit = function () {
+    if (this._hit) {
+        return;
+    }
     this._hit = true;
-    this._eventManager.fireEvent({ 'name': Base.Event.HIT });
+    this._eventManager.fireEvent({ 'name': Base.Event.HIT, 'base': this });
 };
-
 Base.prototype._isHitByBullet = function (event) {
     return event.name == CollisionDetector.Event.COLLISION &&
         event.initiator instanceof Bullet &&
         event.sprite === this
-};
+};;
