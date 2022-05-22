@@ -1,4 +1,3 @@
-
 describe("Tank", function () {
     var eventManager, tank;
 
@@ -121,6 +120,17 @@ describe("Tank", function () {
             'sprite': wall
         });
         expect(tank.resolveCollisionWithSprite).toHaveBeenCalledWith(wall);
+    });
+
+    it("should resolve collision when collides with a base", function () {
+        spyOn(tank, 'resolveCollisionWithSprite');
+        var base = new Base(eventManager);
+        tank.notify({
+            'name': CollisionDetector.Event.COLLISION,
+            'initiator': tank,
+            'sprite': base
+        });
+        expect(tank.resolveCollisionWithSprite).toHaveBeenCalledWith(base);
     });
 
     describe("collision with a tank", function () {
@@ -415,9 +425,7 @@ describe("Tank", function () {
 
             expect(tank.getUpgradeLevel()).toEqual(2);
             expect(tank.getBulletType()).toEqual(Bullet.Type.NORMAL);
-
             tank.upgrade();
-
             expect(tank.getUpgradeLevel()).toEqual(3);
             expect(tank.getBulletType()).toEqual(Bullet.Type.ENHANCED);
         });
@@ -428,14 +436,11 @@ describe("Tank", function () {
             tank.upgrade();
 
             expect(tank.getUpgradeLevel()).toEqual(3);
-
             tank.upgrade();
-
             expect(tank.getUpgradeLevel()).toEqual(3);
         });
     });
 });
-
 describe("Tank", function () {
     it("should subscribe", function () {
         var eventManager = new EventManager();
