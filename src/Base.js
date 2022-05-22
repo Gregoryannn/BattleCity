@@ -29,7 +29,6 @@ Base.prototype.notify = function (event) {
         this.hit();
     }
 };
-
 Base.prototype.hit = function () {
     if (this._hit) {
         return;
@@ -37,8 +36,13 @@ Base.prototype.hit = function () {
     this._hit = true;
     this._eventManager.fireEvent({ 'name': Base.Event.HIT, 'base': this });
 };
+
+Base.prototype.isHit = function () {
+    return this._hit;
+};
+
 Base.prototype._isHitByBullet = function (event) {
     return event.name == CollisionDetector.Event.COLLISION &&
         event.initiator instanceof Bullet &&
         event.sprite === this
-};;
+};

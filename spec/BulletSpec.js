@@ -133,26 +133,39 @@ describe("Bullet", function () {
             });
         });
 
-        it("base", function () {
-            var base = new Base(eventManager);
-            spyOn(bullet, 'destroy');
-            bullet.notify({
-                'name': CollisionDetector.Event.COLLISION,
-                'initiator': bullet,
-                'sprite': base
+          describe("base", function () {
+                it("normal", function () {
+                    var base = new Base(eventManager);
+                    spyOn(bullet, 'destroy');
+                    bullet.notify({
+                        'name': CollisionDetector.Event.COLLISION,
+                        'initiator': bullet,
+                        'sprite': base
+                    });
+                    expect(bullet.destroy).toHaveBeenCalled();
+                });
+
+                it("hit", function () {
+                    var base = new Base(eventManager);
+                    base.hit();
+                    spyOn(bullet, 'destroy');
+                    bullet.notify({
+                        'name': CollisionDetector.Event.COLLISION,
+                        'initiator': bullet,
+                        'sprite': base
+                    });
+                    expect(bullet.destroy).not.toHaveBeenCalled();
+                });
             });
-            expect(bullet.destroy).toHaveBeenCalled();
         });
     });
-});
-
-describe("Bullet", function () {
-    it("should subscribe", function () {
-        var eventManager = new EventManager();
-        spyOn(eventManager, 'addSubscriber');
-        var tank = new Tank(eventManager);
-        var bullet = new Bullet(eventManager, tank);
-        expect(eventManager.addSubscriber).toHaveBeenCalledWith(bullet,
-            [CollisionDetector.Event.OUT_OF_BOUNDS, CollisionDetector.Event.COLLISION]);
+    describe("Bullet", function () {
+        it("should subscribe", function () {
+            var eventManager = new EventManager();
+            spyOn(eventManager, 'addSubscriber');
+            var tank = new Tank(eventManager);
+            var bullet = new Bullet(eventManager, tank);
+            expect(eventManager.addSubscriber).toHaveBeenCalledWith(bullet,
+                [CollisionDetector.Event.OUT_OF_BOUNDS, CollisionDetector.Event.COLLISION]);
+        });
     });
-});
