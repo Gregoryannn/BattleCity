@@ -4,7 +4,6 @@ function Keyboard(eventManager) {
     this._listen();
     this._keys = {};
 }
-
 Keyboard.Key = {};
 Keyboard.Key.SPACE = 32;
 Keyboard.Key.LEFT = 37;
@@ -13,10 +12,12 @@ Keyboard.Key.RIGHT = 39;
 Keyboard.Key.DOWN = 40;
 Keyboard.Key.P = 80;
 Keyboard.Key.S = 83;
+Keyboard.Key.SELECT = 17;
+Keyboard.Key.START = 13;
+
 Keyboard.Event = {};
 Keyboard.Event.KEY_PRESSED = 'Keyboard.Event.KEY_PRESSED';
 Keyboard.Event.KEY_RELEASED = 'Keyboard.Event.KEY_RELEASED';
-
 Keyboard.prototype._listen = function () {
     var self = this;
     $(document).keydown(function (event) {
