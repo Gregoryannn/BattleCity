@@ -286,7 +286,7 @@ describe("Tank", function () {
         describe("CollisionDetector.Event.COLLISION", function () {
             describe("bullet", function () {
                 it("other's bullet", function () {
-                    spyOn(tank, 'destroy');
+                    spyOn(tank, 'hit');
                     var otherTank = new Tank(eventManager);
                     var bullet = new Bullet(eventManager, otherTank);
                     tank.notify({
@@ -294,22 +294,22 @@ describe("Tank", function () {
                         'initiator': bullet,
                         'sprite': tank
                     });
-                    expect(tank.destroy).toHaveBeenCalled();
+                    expect(tank.hit).toHaveBeenCalled();
                 });
 
                 it("own bullet", function () {
-                    spyOn(tank, 'destroy');
+                    spyOn(tank, 'hit');
                     var bullet = new Bullet(eventManager, tank);
                     tank.notify({
                         'name': CollisionDetector.Event.COLLISION,
                         'initiator': bullet,
                         'sprite': tank
                     });
-                    expect(tank.destroy).not.toHaveBeenCalled();
+                    expect(tank.hit).not.toHaveBeenCalled();
                 });
 
                 it("enemy shot enemy", function () {
-                    spyOn(tank, 'destroy');
+                    spyOn(tank, 'hit');
                     tank.makeEnemy();
                     var otherTank = new Tank(eventManager);
                     otherTank.makeEnemy();
@@ -319,7 +319,7 @@ describe("Tank", function () {
                         'initiator': bullet,
                         'sprite': tank
                     });
-                    expect(tank.destroy).not.toHaveBeenCalled();
+                    expect(tank.hit).not.toHaveBeenCalled();
                 });
 
                 it("invincible", function () {
@@ -337,6 +337,32 @@ describe("Tank", function () {
             });
         });
     });
+
+    describe("#hit", function () {
+        it("normal tank", function () {
+            tank.setHitLimit(1);
+            spyOn(tank, 'destroy');
+            tank.hit();
+            expect(tank.destroy).toHaveBeenCalled();
+        });
+
+        it("armored tank", function () {
+            tank.setHitLimit(4);
+            spyOn(tank, 'destroy');
+            tank.hit();
+            expect(tank.destroy).not.toHaveBeenCalled();
+            tank.hit();
+            expect(tank.destroy).not.toHaveBeenCalled();
+            tank.hit();
+            expect(tank.destroy).not.toHaveBeenCalled();
+            tank.hit();
+            expect(tank.destroy).toHaveBeenCalled();
+        });
+    });
+
+
+
+
 
     describe("#stateAppearingEnd", function () {
         beforeEach(function () {
