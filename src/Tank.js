@@ -44,6 +44,8 @@ Tank.Type = {};
 Tank.Type.PLAYER_1 = 'player1';
 Tank.Type.BASIC = 'basic';
 Tank.Type.FAST = 'fast';
+Tank.Type.ARMOR = 'armor';
+
 Tank.Event = {};
 Tank.Event.SHOOT = 'Tank.Event.SHOOT';
 Tank.Event.CREATED = 'Tank.Event.CREATED';
@@ -118,19 +120,20 @@ Tank.prototype.shoot = function () {
 Tank.prototype.updateHook = function () {
     this._state.update();
 };
-
 Tank.prototype.updateColor = function () {
     this._color.update();
 };
-
 Tank.prototype.setColor = function (color) {
     this._color = color;
+};
+
+Tank.prototype.setColorValues = function (values) {
+    this._color.setColors(values);
 };
 
 Tank.prototype.getColorValue = function () {
     return this._color.getColor();
 };
-
 Tank.prototype.notify = function (event) {
     if (event.name == Bullet.Event.DESTROYED && event.tank == this) {
         this._bullets--;
@@ -185,7 +188,6 @@ Tank.prototype.move = function () {
 Tank.prototype.getEventManager = function () {
     return this._eventManager;
 };
-
 Tank.prototype.hit = function () {
     this._hit++;
     this._color.hit();

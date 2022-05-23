@@ -9,6 +9,7 @@ function Level(eventManager) {
     new BulletFactory(eventManager);
     new BulletExplosionFactory(eventManager);
     new TankExplosionFactory(eventManager);
+    new BaseExplosionFactory(eventManager);
     new PointsFactory(eventManager);
     new Score(eventManager);
     this._freezeTimer = new FreezeTimer(eventManager);
@@ -23,7 +24,9 @@ function Level(eventManager) {
     ]);
     this._enemyFactory.setEnemies([
         { type: Tank.Type.BASIC, flashing: true },
-        { type: Tank.Type.FAST },
+        { type: Tank.Type.ARMOR },
+        { type: Tank.Type.ARMOR },
+        { type: Tank.Type.ARMOR },
         { type: Tank.Type.BASIC },
         { type: Tank.Type.FAST },
         { type: Tank.Type.BASIC },
@@ -77,7 +80,6 @@ Level.prototype.draw = function (ctx) {
     this._pause.draw(ctx);
     this._livesView.draw(ctx);
 };
-
 Level.prototype._createPowerUpFactory = function () {
     var powerUpFactory = new PowerUpFactory(this._eventManager);
 

@@ -23,7 +23,6 @@ EnemyFactory.prototype.setEnemies = function (enemies) {
 EnemyFactory.prototype.setPositions = function (positions) {
     this._positions = positions;
 };
-
 EnemyFactory.prototype.update = function () {
     if (this._pauseListener.isPaused()) {
         return;
@@ -64,11 +63,17 @@ EnemyFactory.prototype.createEnemy = function (enemy, position) {
     tank.setState(new TankStateAppearing(tank));
 
     if (enemy.type == Tank.Type.BASIC) {
-        tank.setNormalSpeed(1.5);
+        tank.setNormalSpeed(1);
         tank.setTrackAnimationDuration(4);
     }
     else if (enemy.type == Tank.Type.FAST) {
         tank.setNormalSpeed(3);
+    }
+    else if (enemy.type == Tank.Type.ARMOR) {
+        tank.setNormalSpeed(1);
+        tank.setTrackAnimationDuration(4);
+        tank.setHitLimit(4);
+        tank.setColorValues([[0, 1], [0, 2], [1, 2], [0, 0]])
     }
 
     if (enemy.flashing) {
