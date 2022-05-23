@@ -324,7 +324,7 @@ describe("Tank", function () {
 
                 it("invincible", function () {
                     tank.setState(new TankStateInvincible(tank));
-                    spyOn(tank, 'destroy');
+                    spyOn(tank, 'hit');
                     var otherTank = new Tank(eventManager);
                     var bullet = new Bullet(eventManager, otherTank);
                     tank.notify({
@@ -332,7 +332,7 @@ describe("Tank", function () {
                         'initiator': bullet,
                         'sprite': tank
                     });
-                    expect(tank.destroy).not.toHaveBeenCalled();
+                    expect(tank.hit).not.toHaveBeenCalled();
                 });
             });
         });
@@ -358,11 +358,15 @@ describe("Tank", function () {
             tank.hit();
             expect(tank.destroy).toHaveBeenCalled();
         });
+
+        it("color", function () {
+            var color = new TankColor();
+            tank.setColor(color);
+            spyOn(color, 'hit');
+            tank.hit();
+            expect(color.hit).toHaveBeenCalled();
+        });
     });
-
-
-
-
 
     describe("#stateAppearingEnd", function () {
         beforeEach(function () {
@@ -466,7 +470,16 @@ describe("Tank", function () {
             expect(tank.getUpgradeLevel()).toEqual(3);
         });
     });
+
+    it("#updateColor", function () {
+        var color = new TankColor();
+        tank.setColor(color);
+        spyOn(color, 'update');
+        tank.updateColor();
+        expect(color.update).toHaveBeenCalled();
+    });
 });
+
 describe("Tank", function () {
     it("should subscribe", function () {
         var eventManager = new EventManager();

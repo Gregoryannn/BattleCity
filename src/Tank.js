@@ -18,6 +18,7 @@ function Tank(eventManager) {
     this._flashing = false;
     this._collisionResolvingMoveLimit = 10;
     this._upgradeLevel = 0;
+    this._color = new TankColor();
 
     this._hitLimit = 1;
     this._hit = 0;
@@ -117,6 +118,19 @@ Tank.prototype.shoot = function () {
 Tank.prototype.updateHook = function () {
     this._state.update();
 };
+
+Tank.prototype.updateColor = function () {
+    this._color.update();
+};
+
+Tank.prototype.setColor = function (color) {
+    this._color = color;
+};
+
+Tank.prototype.getColorValue = function () {
+    return this._color.getColor();
+};
+
 Tank.prototype.notify = function (event) {
     if (event.name == Bullet.Event.DESTROYED && event.tank == this) {
         this._bullets--;
@@ -174,15 +188,14 @@ Tank.prototype.getEventManager = function () {
 
 Tank.prototype.hit = function () {
     this._hit++;
+    this._color.hit();
     if (this._hit == this._hitLimit) {
         this.destroy();
     }
 };
-
 Tank.prototype.setHitLimit = function (limit) {
     this._hitLimit = limit;
 };
-
 Tank.prototype.destroyHook = function () {
     this._eventManager.fireEvent({ 'name': Tank.Event.DESTROYED, 'tank': this });
 
