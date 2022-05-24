@@ -1,12 +1,13 @@
 function Level(sceneManager) {
     Gamefield.call(this, sceneManager);
 
+    this._visible = false;
+
     new PlayerTankControllerFactory(this._eventManager);
 
     var playerTankFactory = new PlayerTankFactory(this._eventManager);
     playerTankFactory.setAppearPosition(new Point(this._x + 4 * Globals.UNIT_SIZE, this._y + 12 * Globals.UNIT_SIZE));
     playerTankFactory.create();
-
     new BulletFactory(this._eventManager);
     new BulletExplosionFactory(this._eventManager);
     new TankExplosionFactory(this._eventManager);
@@ -17,16 +18,12 @@ function Level(sceneManager) {
 
     this._aiControllersContainer = new AITankControllerContainer(this._eventManager);
     new AITankControllerFactory(this._eventManager);
-
     this._enemyFactory = new EnemyFactory(this._eventManager);
-
     this._enemyFactory.setPositions([
-
         new Point(this._x + 6 * Globals.UNIT_SIZE, this._y),
         new Point(this._x + 12 * Globals.UNIT_SIZE, this._y),
         new Point(this._x, this._y),
     ]);
-
     this._enemyFactory.setEnemies([
         { type: Tank.Type.BASIC, flashing: true },
         { type: Tank.Type.POWER },
@@ -71,7 +68,6 @@ function Level(sceneManager) {
     var serializer = new SpriteSerializer(this._eventManager);
     serializer.unserializeSprites(map);
 }
-
 Level.subclass(Gamefield);
 Level.prototype.update = function () {
     Gamefield.prototype.update.call(this);
@@ -81,12 +77,21 @@ Level.prototype.update = function () {
     this._shovelHandler.update();
     this._pause.update();
 };
+
 Level.prototype.draw = function (ctx) {
+    if (!this._visible) {
+        return;
+    }
     Gamefield.prototype.draw.call(this, ctx);
     this._enemyFactoryView.draw(ctx);
     this._pause.draw(ctx);
     this._livesView.draw(ctx);
 };
+
+Level.prototype.show = function () {
+    this._visible = true;
+};
+
 Level.prototype._createPowerUpFactory = function () {
     var powerUpFactory = new PowerUpFactory(this._eventManager);
 

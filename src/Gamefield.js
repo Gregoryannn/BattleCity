@@ -16,13 +16,15 @@ function Gamefield(sceneManager) {
     var bounds = new Rect(this._x, this._y, this._w, this._h);
     new CollisionDetector(this._eventManager, bounds, this._spriteContainer);
 }
-
 Gamefield.subclass(Rect);
 Gamefield.prototype.update = function () {
     this._updater.update();
 };
 
 Gamefield.prototype.draw = function (ctx) {
+    ctx.fillStyle = "#808080";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
     ctx.fillStyle = "black";
     ctx.fillRect(this._x, this._y, this._w, this._h);
 
