@@ -1,36 +1,29 @@
-function Construction(sceneManager, eventManager) {
-    Gamefield.call(this, sceneManager, eventManager);
+function Construction(sceneManager) {
+    Gamefield.call(this, sceneManager);
 
     this._eventManager.addSubscriber(this, [Keyboard.Event.KEY_PRESSED]);
 
-    new Builder(eventManager);
-    this._structureManager = new StructureManager(eventManager);
-
-    this._cursor = new Cursor(eventManager);
+    new Builder(this._eventManager);
+    this._structureManager = new StructureManager(this._eventManager);
+    this._cursor = new Cursor(this._eventManager);
     this._cursor.setZIndex(100);
     this._cursor.setPosition(new Point(this._x, this._y));
-    new CursorController(eventManager, this._cursor);
-
-    this._spriteSerializerController = new SpriteSerializerController(eventManager, this._structureManager);
-
+    new CursorController(this._eventManager, this._cursor);
+    this._spriteSerializerController = new SpriteSerializerController(this._eventManager, this._structureManager);
     this._createBase();
 }
-
 Construction.subclass(Gamefield);
-
 Construction.prototype.notify = function (event) {
     if (event.name == Keyboard.Event.KEY_PRESSED) {
         this.keyPressed(event.key);
     }
 };
-
 Construction.prototype.keyPressed = function (key) {
     if (key == Keyboard.Key.START) {
         this._spriteSerializerController.destroy();
         this._sceneManager.toMainMenuScene(true);
     }
 };
-
 Construction.prototype._createBase = function () {
     var base = new Base(this._eventManager);
     base.setPosition(new Point(this._x + 6 * Globals.UNIT_SIZE, this._y + 12 * Globals.UNIT_SIZE));

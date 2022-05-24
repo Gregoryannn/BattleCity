@@ -1,18 +1,18 @@
+
 describe("SceneManager", function () {
     it("#update", function () {
-        var manager = new SceneManager();
-        var scene = jasmine.createSpyObj('scene', ['update']);
+        var eventManager = new EventManager();
+        var manager = new SceneManager(eventManager);
+        var scene = new MainMenuScene(manager);
+        spyOn(scene, 'update');
         manager.setScene(scene);
         manager.update();
         expect(scene.update).toHaveBeenCalled();
     });
 
-    it("#draw", function () {
-        var manager = new SceneManager();
-        var scene = jasmine.createSpyObj('scene', ['draw']);
-        manager.setScene(scene);
-        var ctx = 'ctx';
-        manager.draw(ctx);
-        expect(scene.draw).toHaveBeenCalledWith(ctx);
+    it("#toMainMenuScene", function () {
+        var manager = new SceneManager(new EventManager());
+        manager.toMainMenuScene();
+        expect(manager.getScene() instanceof MainMenuScene).toBeTruthy();
     });
 });
