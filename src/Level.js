@@ -77,7 +77,6 @@ Level.prototype.update = function () {
     this._shovelHandler.update();
     this._pause.update();
 };
-
 Level.prototype.draw = function (ctx) {
     if (!this._visible) {
         return;
@@ -86,12 +85,12 @@ Level.prototype.draw = function (ctx) {
     this._enemyFactoryView.draw(ctx);
     this._pause.draw(ctx);
     this._livesView.draw(ctx);
+    this._drawFlag(ctx);
 };
 
 Level.prototype.show = function () {
     this._visible = true;
 };
-
 Level.prototype._createPowerUpFactory = function () {
     var powerUpFactory = new PowerUpFactory(this._eventManager);
 
@@ -126,4 +125,11 @@ Level.prototype._createPowerUpFactory = function () {
         new Point(powerUpCol3X, powerUpRow4Y),
         new Point(powerUpCol4X, powerUpRow4Y),
     ]);
+};
+
+Level.prototype._drawFlag = function (ctx) {
+    ctx.drawImage(ImageManager.getImage('flag'), 464, 352);
+
+    ctx.fillStyle = "black";
+    ctx.fillText("1", 482, 398);
 };

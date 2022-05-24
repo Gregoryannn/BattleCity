@@ -38,6 +38,5 @@ Pause.prototype.keyPressed = function (key) {
             return;
         }
         ctx.fillStyle = "#e44437";
-        ctx.font = "16px prstart"
         ctx.fillText("PAUSE", 202, 240);
     };
