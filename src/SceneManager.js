@@ -8,7 +8,6 @@ SceneManager.prototype.setScene = function (scene) {
 SceneManager.prototype.getScene = function () {
     return this._scene;
 };
-
 SceneManager.prototype.toMainMenuScene = function (arrived) {
     this._eventManager.removeAllSubscribers();
     this._scene = new MainMenuScene(this);
@@ -19,23 +18,20 @@ SceneManager.prototype.toMainMenuScene = function (arrived) {
     }
 };
 
-SceneManager.prototype.toLevelScene = function () {
-    this._eventManager.removeAllSubscribers();
-    this._scene = new Level(this);
-};
-
-SceneManager.prototype.toConstructionScene = function () {
-    this._eventManager.removeAllSubscribers();
-    this._scene = new Construction(this);
-};
-
-SceneManager.prototype.update = function () {
-    this._scene.update();
-};
-SceneManager.prototype.draw = function (ctx) {
-    this._scene.draw(ctx);
-};
-
-SceneManager.prototype.getEventManager = function () {
-    return this._eventManager;
-};
+    SceneManager.prototype.toGameScene = function () {
+        this._eventManager.removeAllSubscribers();
+        this._scene = new Level(this);
+    };
+    SceneManager.prototype.toConstructionScene = function () {
+        this._eventManager.removeAllSubscribers();
+        this._scene = new Construction(this);
+    };
+    SceneManager.prototype.update = function () {
+        this._scene.update();
+    };
+    SceneManager.prototype.draw = function (ctx) {
+        this._scene.draw(ctx);
+    };
+    SceneManager.prototype.getEventManager = function () {
+        return this._eventManager;
+    };
