@@ -1,6 +1,7 @@
-function Gamefield(eventManager) {
+function Gamefield(sceneManager, eventManager) {
     Rect.call(this);
 
+    this._sceneManager = sceneManager;
     this._eventManager = eventManager;
 
     this._x = Globals.UNIT_SIZE;
@@ -15,7 +16,6 @@ function Gamefield(eventManager) {
     var bounds = new Rect(this._x, this._y, this._w, this._h);
     new CollisionDetector(eventManager, bounds, this._spriteContainer);
 }
-
 Gamefield.subclass(Rect);
 Gamefield.prototype.update = function () {
     this._updater.update();
