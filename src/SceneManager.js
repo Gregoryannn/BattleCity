@@ -17,22 +17,30 @@ SceneManager.prototype.toMainMenuScene = function (arrived) {
         this._scene.arrived();
     }
 };
-
 SceneManager.prototype.toGameScene = function () {
     this._eventManager.removeAllSubscribers();
     this._scene = new GameScene(this);
 };
-
 SceneManager.prototype.toConstructionScene = function () {
     this._eventManager.removeAllSubscribers();
     this._scene = new Construction(this);
 };
-SceneManager.prototype.update = function () {
-    this._scene.update();
-};
-SceneManager.prototype.draw = function (ctx) {
-    this._scene.draw(ctx);
-};
-SceneManager.prototype.getEventManager = function () {
-    return this._eventManager;
-};
+
+    SceneManager.prototype.toStageStatisticsScene = function (stage) {
+        this._eventManager.removeAllSubscribers();
+        this._scene = new StageStatisticsScene(this, stage);
+    };
+
+    SceneManager.prototype.toGameOverScene = function () {
+        this._eventManager.removeAllSubscribers();
+        this._scene = new GameOverScene(this);
+    };
+    SceneManager.prototype.update = function () {
+        this._scene.update();
+    };
+    SceneManager.prototype.draw = function (ctx) {
+        this._scene.draw(ctx);
+    };
+    SceneManager.prototype.getEventManager = function () {
+        return this._eventManager;
+    };

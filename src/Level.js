@@ -62,10 +62,9 @@ function Level(sceneManager, stageNumber) {
     this._gameOverScript.setActive(false);
     this._gameOverScript.enqueue(new MoveFn(this._gameOverMessage, 'y', 213, 100, this._gameOverScript));
     this._gameOverScript.enqueue(new Delay(this._gameOverScript, 50));
-
+    this._gameOverScript.enqueue({ execute: function () { sceneManager.toStageStatisticsScene(stageNumber); } });
     this._loadStage(this._stage);
 }
-
 Level.subclass(Gamefield);
 Level.prototype.update = function () {
     Gamefield.prototype.update.call(this);
@@ -76,7 +75,6 @@ Level.prototype.update = function () {
     this._pause.update();
     this._gameOverScript.update();
 };
-
 Level.prototype.draw = function (ctx) {
     if (!this._visible) {
         return;
@@ -88,18 +86,15 @@ Level.prototype.draw = function (ctx) {
     this._drawFlag(ctx);
     this._gameOverMessage.draw(ctx);
 };
-
 Level.prototype.show = function () {
     this._visible = true;
 };
-
 Level.prototype.notify = function (event) {
     if (event.name == BaseExplosion.Event.DESTROYED) {
         this._gameOverScript.setActive(true);
         this._pause.setActive(false);
     }
 };
-
 Level.prototype._loadStage = function (stageNumber) {
     var stage = Globals.stages[stageNumber];
 
