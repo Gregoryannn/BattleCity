@@ -52,33 +52,19 @@ function Level(sceneManager, stageNumber, player) {
     this._shovelHandler = new ShovelHandler(this._eventManager);
     this._shovelHandler.setBaseWallBuilder(baseWallBuilder);
     this._pause = new Pause(this._eventManager);
-
-
-    if (player !== undefined) {
-        this._player = player;
-        this._livesView = new LivesView(this._player.getLives());
-    }
-    else {
-        var lives = new Lives(this._eventManager);
-        this._livesView = new LivesView(lives);
-        var score = new Score(this._eventManager);
-
-        this._player = new Player(this._eventManager, lives, score);
-    }
-
+    this._player = player === undefined ? new Player() : player;
+    this._player.setEventManager(this._eventManager);
+    this._livesView = new LivesView(this._player);
     this._gameOverMessage = new GameOverMessage();
-
     this._gameOverScript = new Script();
     this._gameOverScript.setActive(false);
     this._gameOverScript.enqueue(new MoveFn(this._gameOverMessage, 'y', 213, 100, this._gameOverScript));
     this._gameOverScript.enqueue(new Delay(this._gameOverScript, 50));
     this._gameOverScript.enqueue({ execute: function () { sceneManager.toStageStatisticsScene(stageNumber, self._player, true); } });
-
     this._levelTransitionScript = new Script();
     this._levelTransitionScript.setActive(false);
     this._levelTransitionScript.enqueue(new Delay(this._levelTransitionScript, 200));
     this._levelTransitionScript.enqueue({ execute: function () { sceneManager.toStageStatisticsScene(stageNumber, self._player, false); } });
-
     this._loadStage(this._stage);
 }
 Level.subclass(Gamefield);
@@ -116,7 +102,7 @@ Level.prototype.notify = function (event) {
     }
 };
 Level.prototype._loadStage = function (stageNumber) {
-    var stage = Globals.stages[stageNumber];
+    var stage = Globals.stages[(stageNumber - 1) % Globals.stages.length];
 
     var serializer = new SpriteSerializer(this._eventManager);
     serializer.unserializeSprites(stage.map);

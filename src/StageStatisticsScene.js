@@ -27,6 +27,7 @@ function StageStatisticsScene(sceneManager, stage, player, gameOver) {
     this._script.enqueue(new Delay(this._script, 60));
     this._script.enqueue({
         execute: function () {
+            self._player.resetTanks();
             if (gameOver) {
                 sceneManager.toGameOverScene();
             }
@@ -36,7 +37,6 @@ function StageStatisticsScene(sceneManager, stage, player, gameOver) {
         }
     });
 };
-
 StageStatisticsScene.prototype.update = function () {
     this._script.update();
 };
