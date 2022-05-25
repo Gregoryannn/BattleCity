@@ -15,6 +15,8 @@ function Builder(eventManager) {
         Builder.Structure.STEEL_WALL_TOP,
         Builder.Structure.STEEL_WALL_FULL,
 
+        Builder.Structure.TREES,
+
         Builder.Structure.CLEAR,
     ];
     this._structureIndex = 0;
@@ -34,7 +36,11 @@ Builder.Structure.STEEL_WALL_BOTTOM = 'Builder.Structure.STEEL_WALL_BOTTOM';
 Builder.Structure.STEEL_WALL_LEFT = 'Builder.Structure.STEEL_WALL_LEFT';
 Builder.Structure.STEEL_WALL_TOP = 'Builder.Structure.STEEL_WALL_TOP';
 Builder.Structure.STEEL_WALL_FULL = 'Builder.Structure.STEEL_WALL_FULL';
+
+Builder.Structure.TREES = 'Builder.Structure.TREES';
+
 Builder.Structure.CLEAR = 'Builder.Structure.CLEAR';
+
 Builder.Event = {};
 Builder.Event.STRUCTURE_CREATED = 'Builder.Event.STRUCTURE_CREATED';
 Builder.prototype.setTileSize = function (size) {
@@ -83,6 +89,9 @@ Builder.prototype.build = function (cursor) {
     else if (this._structure == Builder.Structure.STEEL_WALL_FULL) {
         structure = this.buildSteelWallFull(cursor.getPosition());
     }
+    else if (this._structure == Builder.Structure.TREES) {
+        structure = this.buildTrees(cursor.getPosition());
+    }
     else if (this._structure == Builder.Structure.CLEAR) {
         structure = this.clear(cursor.getPosition());
     }
@@ -123,6 +132,15 @@ Builder.prototype.buildSteelWallTop = function (position) {
 Builder.prototype.buildSteelWallFull = function (position) {
     return this._buildWallFull(position, new SteelWallFactory(this._eventManager));
 };
+
+Builder.prototype.buildTrees = function (position) {
+    var parts = [];
+    var trees = new Trees(this._eventManager);
+    trees.setPosition(position);
+    parts.push(trees);
+    return parts;
+};
+
 Builder.prototype.clear = function (position) {
     return [];
 };
@@ -211,7 +229,6 @@ Builder.prototype._buildWallFull = function (position, factory) {
 
     return parts;
 };
-
 Builder.prototype._nextStructure = function () {
     this._prevStructureIndex = this._structureIndex;
     this._structureIndex++;
@@ -220,8 +237,7 @@ Builder.prototype._nextStructure = function () {
     }
     this._structure = this._structures[this._structureIndex];
 };
-
 Builder.prototype._prevStructure = function () {
-     this._structureIndex = this._prevStructureIndex;
+    this._structureIndex = this._prevStructureIndex;
     this._structure = this._structures[this._structureIndex];
 };
