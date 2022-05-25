@@ -1,5 +1,6 @@
 function Script() {
     this._nodes = [];
+    this._active = true;
 }
 
 Script.prototype.enqueue = function (node) {
@@ -7,6 +8,9 @@ Script.prototype.enqueue = function (node) {
 };
 
 Script.prototype.update = function () {
+    if (!this._active) {
+        return;
+    }
     while (true) {
         if (this._nodes.length == 0) {
             return;
@@ -20,7 +24,10 @@ Script.prototype.update = function () {
 
     this._nodes[0].update();
 };
-
 Script.prototype.actionCompleted = function () {
     this._nodes.shift();
+};
+
+Script.prototype.setActive = function (active) {
+    this._active = active;
 };

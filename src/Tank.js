@@ -183,6 +183,11 @@ Tank.prototype.move = function () {
     }
     Sprite.prototype.move.call(this);
 };
+
+Tank.prototype.canMove = function () {
+    return this._state.canMove();
+};
+
 Tank.prototype.getEventManager = function () {
     return this._eventManager;
 };
