@@ -1,25 +1,27 @@
 function Level(sceneManager, stageNumber) {
     Gamefield.call(this, sceneManager);
 
-    this._eventManager.addSubscriber(this, [BaseExplosion.Event.DESTROYED]);
+    var self = this;
 
+    this._eventManager.addSubscriber(this, [BaseExplosion.Event.DESTROYED, EnemyFactory.Event.LAST_ENEMY_DESTROYED]);
     this._visible = false;
     this._stage = stageNumber;
 
     new PlayerTankControllerFactory(this._eventManager);
-
     var playerTankFactory = new PlayerTankFactory(this._eventManager);
+
     playerTankFactory.setAppearPosition(new Point(this._x + 4 * Globals.UNIT_SIZE, this._y + 12 * Globals.UNIT_SIZE));
     playerTankFactory.create();
+
     new BulletFactory(this._eventManager);
     new BulletExplosionFactory(this._eventManager);
     new TankExplosionFactory(this._eventManager);
     new BaseExplosionFactory(this._eventManager);
     new PointsFactory(this._eventManager);
-    new Score(this._eventManager);
-    this._freezeTimer = new FreezeTimer(this._eventManager);
 
+    this._freezeTimer = new FreezeTimer(this._eventManager);
     this._aiControllersContainer = new AITankControllerContainer(this._eventManager);
+
     new AITankControllerFactory(this._eventManager);
     this._enemyFactory = new EnemyFactory(this._eventManager);
     this._enemyFactory.setPositions([
@@ -29,10 +31,9 @@ function Level(sceneManager, stageNumber) {
     ]);
 
     this._enemyFactoryView = new EnemyFactoryView(this._enemyFactory);
-
     this._createPowerUpFactory();
-
     var baseWallBuilder = new BaseWallBuilder();
+
     baseWallBuilder.setWallPositions([
         new Point(this._x + 11 * Globals.TILE_SIZE, this._y + 25 * Globals.TILE_SIZE),
         new Point(this._x + 11 * Globals.TILE_SIZE, this._y + 24 * Globals.TILE_SIZE),
@@ -55,6 +56,9 @@ function Level(sceneManager, stageNumber) {
 
     var lives = new Lives(this._eventManager);
     this._livesView = new LivesView(lives);
+    var score = new Score(this._eventManager);
+
+    this._player = new Player(this._eventManager, lives, score);
 
     this._gameOverMessage = new GameOverMessage();
 
@@ -62,9 +66,16 @@ function Level(sceneManager, stageNumber) {
     this._gameOverScript.setActive(false);
     this._gameOverScript.enqueue(new MoveFn(this._gameOverMessage, 'y', 213, 100, this._gameOverScript));
     this._gameOverScript.enqueue(new Delay(this._gameOverScript, 50));
-    this._gameOverScript.enqueue({ execute: function () { sceneManager.toStageStatisticsScene(stageNumber); } });
+    this._gameOverScript.enqueue({ execute: function () { sceneManager.toStageStatisticsScene(stageNumber, self._player); } });
+
+    this._levelTransitionScript = new Script();
+    this._levelTransitionScript.setActive(false);
+    this._levelTransitionScript.enqueue(new Delay(this._levelTransitionScript, 200));
+    this._levelTransitionScript.enqueue({ execute: function () { sceneManager.toStageStatisticsScene(stageNumber, self._player); } });
+
     this._loadStage(this._stage);
 }
+
 Level.subclass(Gamefield);
 Level.prototype.update = function () {
     Gamefield.prototype.update.call(this);
@@ -74,7 +85,9 @@ Level.prototype.update = function () {
     this._shovelHandler.update();
     this._pause.update();
     this._gameOverScript.update();
+    this._levelTransitionScript.update();
 };
+
 Level.prototype.draw = function (ctx) {
     if (!this._visible) {
         return;
@@ -94,7 +107,11 @@ Level.prototype.notify = function (event) {
         this._gameOverScript.setActive(true);
         this._pause.setActive(false);
     }
+    else if (event.name == EnemyFactory.Event.LAST_ENEMY_DESTROYED) {
+        this._levelTransitionScript.setActive(true);
+    }
 };
+
 Level.prototype._loadStage = function (stageNumber) {
     var stage = Globals.stages[stageNumber];
 
