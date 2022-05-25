@@ -1,8 +1,8 @@
-function Level(sceneManager) {
+function Level(sceneManager, stageNumber) {
     Gamefield.call(this, sceneManager);
 
     this._visible = false;
-    this._stage = 1;
+    this._stage = stageNumber;
 
     new PlayerTankControllerFactory(this._eventManager);
 
@@ -27,6 +27,7 @@ function Level(sceneManager) {
     ]);
 
     this._enemyFactoryView = new EnemyFactoryView(this._enemyFactory);
+
     this._createPowerUpFactory();
 
     var baseWallBuilder = new BaseWallBuilder();
@@ -53,9 +54,8 @@ function Level(sceneManager) {
     var lives = new Lives(this._eventManager);
     this._livesView = new LivesView(lives);
 
-   this._loadStage(this._stage);
+    this._loadStage(this._stage);
 }
-
 Level.subclass(Gamefield);
 Level.prototype.update = function () {
     Gamefield.prototype.update.call(this);
@@ -78,7 +78,6 @@ Level.prototype.draw = function (ctx) {
 Level.prototype.show = function () {
     this._visible = true;
 };
-
 Level.prototype._loadStage = function (stageNumber) {
     var stage = Globals.stages[stageNumber];
 
@@ -87,7 +86,6 @@ Level.prototype._loadStage = function (stageNumber) {
 
     this._enemyFactory.setEnemies(stage.tanks);
 };
-
 Level.prototype._createPowerUpFactory = function () {
     var powerUpFactory = new PowerUpFactory(this._eventManager);
 
@@ -127,5 +125,5 @@ Level.prototype._drawFlag = function (ctx) {
     ctx.drawImage(ImageManager.getImage('flag'), 464, 352);
 
     ctx.fillStyle = "black";
-    ctx.fillText(this._stage, 482, 398);
+    ctx.fillText(("" + this._stage).lpad(" ", 2), 466, 398);
 };
