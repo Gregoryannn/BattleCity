@@ -108,6 +108,9 @@ Tank.prototype.setBulletType = function (type) {
 };
 
 Tank.prototype.shoot = function () {
+    if (this.isDestroyed()) {
+        return;
+    }
     if (!this._state.canShoot()) {
         return;
     }
@@ -183,11 +186,9 @@ Tank.prototype.move = function () {
     }
     Sprite.prototype.move.call(this);
 };
-
 Tank.prototype.canMove = function () {
     return this._state.canMove();
 };
-
 Tank.prototype.getEventManager = function () {
     return this._eventManager;
 };
