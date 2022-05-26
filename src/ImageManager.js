@@ -1,4 +1,4 @@
-var ImageManager = (function () {
+var ImageManager = (function() {
     var images = {
         tank_player1_down_c0_t1: null,
         tank_player1_down_c0_t2: null,
@@ -62,6 +62,15 @@ var ImageManager = (function () {
         tank_fast_right_c0_t2: null,
         tank_fast_up_c0_t1: null,
         tank_fast_up_c0_t2: null,
+
+        tank_fast_down_c0_t1_f: null,
+        tank_fast_down_c0_t2_f: null,
+        tank_fast_left_c0_t1_f: null,
+        tank_fast_left_c0_t2_f: null,
+        tank_fast_right_c0_t1_f: null,
+        tank_fast_right_c0_t2_f: null,
+        tank_fast_up_c0_t1_f: null,
+        tank_fast_up_c0_t2_f: null,
 
         tank_power_down_c0_t1: null,
         tank_power_down_c0_t2: null,
@@ -163,7 +172,7 @@ var ImageManager = (function () {
     }
 
     return {
-        getImage: function (name) {
+        getImage: function(name) {
             return images[name];
         }
     };
