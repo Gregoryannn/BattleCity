@@ -3,16 +3,21 @@ function Level(sceneManager, stageNumber, player) {
 
     var self = this;
 
-    this._eventManager.addSubscriber(this, [BaseExplosion.Event.DESTROYED, EnemyFactory.Event.LAST_ENEMY_DESTROYED]);
+    this._eventManager.addSubscriber(this, [
+        BaseExplosion.Event.DESTROYED,
+        Player.Event.OUT_OF_LIVES,
+        EnemyFactory.Event.LAST_ENEMY_DESTROYED
+    ]);
 
     this._visible = false;
     this._stage = stageNumber;
 
     new PlayerTankControllerFactory(this._eventManager);
 
-    var playerTankFactory = new PlayerTankFactory(this._eventManager);
-    playerTankFactory.setAppearPosition(new Point(this._x + 4 * Globals.UNIT_SIZE, this._y + 12 * Globals.UNIT_SIZE));
-    playerTankFactory.create();
+    this._playerTankFactory = new PlayerTankFactory(this._eventManager);
+    this._playerTankFactory.setAppearPosition(new Point(this._x + 4 * Globals.UNIT_SIZE, this._y + 12 * Globals.UNIT_SIZE));
+    this._playerTankFactory.create();
+
     new BulletFactory(this._eventManager);
     new BulletExplosionFactory(this._eventManager);
     new TankExplosionFactory(this._eventManager);
@@ -22,15 +27,16 @@ function Level(sceneManager, stageNumber, player) {
 
     this._aiControllersContainer = new AITankControllerContainer(this._eventManager);
     new AITankControllerFactory(this._eventManager);
+
     this._enemyFactory = new EnemyFactory(this._eventManager);
     this._enemyFactory.setPositions([
+
         new Point(this._x + 6 * Globals.UNIT_SIZE, this._y),
         new Point(this._x + 12 * Globals.UNIT_SIZE, this._y),
         new Point(this._x, this._y),
     ]);
 
     this._enemyFactoryView = new EnemyFactoryView(this._enemyFactory);
-
     this._createPowerUpFactory();
 
     var baseWallBuilder = new BaseWallBuilder();
@@ -55,20 +61,24 @@ function Level(sceneManager, stageNumber, player) {
     this._player = player === undefined ? new Player() : player;
     this._player.setEventManager(this._eventManager);
     this._livesView = new LivesView(this._player);
+
     this._gameOverMessage = new GameOverMessage();
+
     this._gameOverScript = new Script();
     this._gameOverScript.setActive(false);
     this._gameOverScript.enqueue(new MoveFn(this._gameOverMessage, 'y', 213, 100, this._gameOverScript));
     this._gameOverScript.enqueue(new Delay(this._gameOverScript, 50));
-    this._gameOverScript.enqueue({ execute: function () { sceneManager.toStageStatisticsScene(stageNumber, self._player, true); } });
+    this._gameOverScript.enqueue({ execute: function() { sceneManager.toStageStatisticsScene(stageNumber, self._player, true); } });
+
     this._levelTransitionScript = new Script();
     this._levelTransitionScript.setActive(false);
     this._levelTransitionScript.enqueue(new Delay(this._levelTransitionScript, 200));
-    this._levelTransitionScript.enqueue({ execute: function () { sceneManager.toStageStatisticsScene(stageNumber, self._player, false); } });
+    this._levelTransitionScript.enqueue({ execute: function() { sceneManager.toStageStatisticsScene(stageNumber, self._player, false); } });
+
     this._loadStage(this._stage);
 }
 Level.subclass(Gamefield);
-Level.prototype.update = function () {
+Level.prototype.update = function() {
     Gamefield.prototype.update.call(this);
     this._enemyFactory.update();
     this._aiControllersContainer.update();
@@ -78,7 +88,7 @@ Level.prototype.update = function () {
     this._gameOverScript.update();
     this._levelTransitionScript.update();
 };
-Level.prototype.draw = function (ctx) {
+Level.prototype.draw = function(ctx) {
     if (!this._visible) {
         return;
     }
@@ -89,19 +99,22 @@ Level.prototype.draw = function (ctx) {
     this._drawFlag(ctx);
     this._gameOverMessage.draw(ctx);
 };
-Level.prototype.show = function () {
+Level.prototype.show = function() {
     this._visible = true;
 };
-Level.prototype.notify = function (event) {
+Level.prototype.notify = function(event) {
     if (event.name == BaseExplosion.Event.DESTROYED) {
         this._gameOverScript.setActive(true);
         this._pause.setActive(false);
-    }
-    else if (event.name == EnemyFactory.Event.LAST_ENEMY_DESTROYED) {
+    } else if (event.name == Player.Event.OUT_OF_LIVES) {
+        this._gameOverScript.setActive(true);
+        this._pause.setActive(false);
+        this._playerTankFactory.setActive(false);
+    } else if (event.name == EnemyFactory.Event.LAST_ENEMY_DESTROYED) {
         this._levelTransitionScript.setActive(true);
     }
 };
-Level.prototype._loadStage = function (stageNumber) {
+Level.prototype._loadStage = function(stageNumber) {
     var stage = Globals.stages[(stageNumber - 1) % Globals.stages.length];
 
     var serializer = new SpriteSerializer(this._eventManager);
@@ -109,7 +122,7 @@ Level.prototype._loadStage = function (stageNumber) {
 
     this._enemyFactory.setEnemies(stage.tanks);
 };
-Level.prototype._createPowerUpFactory = function () {
+Level.prototype._createPowerUpFactory = function() {
     var powerUpFactory = new PowerUpFactory(this._eventManager);
 
     var powerUpCol1X = this._x + Globals.UNIT_SIZE + 15;
@@ -144,7 +157,7 @@ Level.prototype._createPowerUpFactory = function () {
         new Point(powerUpCol4X, powerUpRow4Y),
     ]);
 };
-Level.prototype._drawFlag = function (ctx) {
+Level.prototype._drawFlag = function(ctx) {
     ctx.drawImage(ImageManager.getImage('flag'), 464, 352);
 
     ctx.fillStyle = "black";

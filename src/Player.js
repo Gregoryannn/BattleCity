@@ -3,6 +3,10 @@ function Player() {
     this._score = 0;
     this.resetTanks();
 }
+
+Player.Event = {};
+Player.Event.OUT_OF_LIVES = 'Player.Event.OUT_OF_LIVES';
+
 Player.prototype.resetTanks = function() {
     this._tanks = {};
     this._tanks[Tank.Type.BASIC] = 0;
@@ -25,6 +29,9 @@ Player.prototype.notify = function(event) {
         this._score += event.points.getValue();
     } else if (event.name == Tank.Event.PLAYER_DESTROYED) {
         this._lives--;
+        if (this._lives == 0) {
+            this._eventManager.fireEvent({ 'name': Player.Event.OUT_OF_LIVES });
+        } else {}
     } else if (event.name == PowerUpHandler.Event.TANK) {
         this._lives++;
     } else if (event.name == Tank.Event.ENEMY_DESTROYED) {
