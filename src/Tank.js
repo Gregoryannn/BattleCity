@@ -123,14 +123,12 @@ Tank.prototype.shoot = function() {
 Tank.prototype.updateHook = function() {
     this._state.update();
 };
-
 Tank.prototype.updateColor = function() {
     if (this.isFlashing() && this._hit == 0) {
         return;
     }
     this._color.update();
 };
-
 Tank.prototype.setColor = function(color) {
     this._color = color;
 };
@@ -143,7 +141,7 @@ Tank.prototype.getColorValue = function() {
 Tank.prototype.notify = function(event) {
     if (event.name == Bullet.Event.DESTROYED && event.tank == this) {
         this._bullets--;
-    } else if (this._wallCollision(event) || this._tankCollision(event) || this._baseCollision(event)) {
+    } else if (this._wallCollision(event) || this._tankCollision(event) || this._baseCollision(event) || this._waterCollision(event)) {
         this.resolveCollisionWithSprite(event.sprite);
     } else if (this._bulletCollision(event) && this.canBeDestroyed()) {
         this.hit();
@@ -198,11 +196,9 @@ Tank.prototype.hit = function() {
         this.destroy();
     }
 };
-
 Tank.prototype.isNotHit = function() {
     return this._hit == 0;
 };
-
 Tank.prototype.setHitLimit = function(limit) {
     this._hitLimit = limit;
 };
@@ -339,6 +335,13 @@ Tank.prototype._baseCollision = function(event) {
         event.initiator === this &&
         event.sprite instanceof Base;
 };
+
+Tank.prototype._waterCollision = function(event) {
+    return event.name == CollisionDetector.Event.COLLISION &&
+        event.initiator === this &&
+        event.sprite instanceof Water;
+};
+
 Tank.prototype._tankCollision = function(event) {
     return event.name == CollisionDetector.Event.COLLISION &&
         event.initiator === this &&
