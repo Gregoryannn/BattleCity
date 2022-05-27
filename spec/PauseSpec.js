@@ -11,22 +11,20 @@ describe("Pause", function () {
             var eventManager = new EventManager();
             var pause = new Pause(eventManager);
             spyOn(pause, 'keyPressed');
-            pause.notify({ 'name': Keyboard.Event.KEY_PRESSED, 'key': Keyboard.Key.P });
-            expect(pause.keyPressed).toHaveBeenCalledWith(Keyboard.Key.P);
-        });
-
-    });
-
-    it("#keyPressed and #keyReleased", function () {
-        it("#keyPressed", function () {
-            var eventManager = new EventManager();
-            spyOn(eventManager, 'fireEvent');
-            var pause = new Pause(eventManager);
-
-            pause.keyPressed(Keyboard.Key.P);
-            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Pause.Event.START });
-
-            pause.keyPressed(Keyboard.Key.P);
-            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Pause.Event.END });
+            pause.notify({ 'name': Keyboard.Event.KEY_PRESSED, 'key': Keyboard.Key.START });
+            expect(pause.keyPressed).toHaveBeenCalledWith(Keyboard.Key.START);
         });
     });
+
+    it("#keyPressed", function () {
+        var eventManager = new EventManager();
+        spyOn(eventManager, 'fireEvent');
+        var pause = new Pause(eventManager);
+
+        pause.keyPressed(Keyboard.Key.START);
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Pause.Event.START });
+
+        pause.keyPressed(Keyboard.Key.START);
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': Pause.Event.END });
+    });
+});

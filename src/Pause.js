@@ -17,31 +17,31 @@ Pause.prototype.keyPressed = function (key) {
     if (!this._active) {
         return;
     }
-    if (key == Keyboard.Key.P) {
-        this._pause = !this._pause;
+        if (key == Keyboard.Key.START) {
+            this._pause = !this._pause;
 
-        if (this._pause) {
-            SoundManager.play("pause");
-            this._eventManager.fireEvent({ 'name': Pause.Event.START });
+            if (this._pause) {
+                SoundManager.play("pause");
+                this._eventManager.fireEvent({ 'name': Pause.Event.START });
+            }
+            else {
+                this._eventManager.fireEvent({ 'name': Pause.Event.END });
+            }
         }
-        else {
-            this._eventManager.fireEvent({ 'name': Pause.Event.END });
+    };
+    Pause.prototype.update = function () {
+        if (!this._pause) {
+            return;
         }
-    }
-};
-Pause.prototype.update = function () {
-    if (!this._pause) {
-        return;
-    }
-    this._blinkTimer.update();
-};
-Pause.prototype.draw = function (ctx) {
-    if (!this._pause || !this._blinkTimer.isVisible()) {
-        return;
-    }
-    ctx.fillStyle = "#e44437";
-    ctx.fillText("PAUSE", 202, 240);
-};
-Pause.prototype.setActive = function (active) {
-    this._active = active;
-};
+        this._blinkTimer.update();
+    };
+    Pause.prototype.draw = function (ctx) {
+        if (!this._pause || !this._blinkTimer.isVisible()) {
+            return;
+        }
+        ctx.fillStyle = "#e44437";
+        ctx.fillText("PAUSE", 202, 240);
+    };
+    Pause.prototype.setActive = function (active) {
+        this._active = active;
+    };

@@ -17,17 +17,21 @@ Bullet.Speed.FAST = 8;
 Bullet.Type = {};
 Bullet.Type.NORMAL = 'Bullet.Type.NORMAL';
 Bullet.Type.ENHANCED = 'Bullet.Type.ENHANCED';
-
 Bullet.prototype.notify = function (event) {
-        if (this._outOfBounds(event)) {
-            if (this._tank.isPlayer()) {
-                SoundManager.play("bullet_hit_1");
-            }
-            this.destroy();
+    if (this._outOfBounds(event)) {
+        if (this._tank.isPlayer()) {
+            SoundManager.play("bullet_hit_1");
         }
-        else if (this._wallCollision(event)) {
-            if (this._tank.isPlayer() && event.sprite instanceof SteelWall) {
-                SoundManager.play("bullet_hit_1");
+        this.destroy();
+    }
+    else if (this._wallCollision(event)) {
+           if (this._tank.isPlayer()) {
+                if (event.sprite instanceof SteelWall) {
+                    SoundManager.play("bullet_hit_1");
+                }
+                else if (event.sprite instanceof BrickWall) {
+                    SoundManager.play("bullet_hit_2");
+                }
             }
             this.destroy();
         }
