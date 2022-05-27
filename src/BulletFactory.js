@@ -15,8 +15,13 @@ BulletFactory.prototype.createBullet = function (tank) {
     bullet.setSpeed(tank.getBulletSpeed());
     bullet.setType(tank.getBulletType());
 
+    if (tank.isPlayer()) {
+        SoundManager.play("bullet_shot");
+    }
+
     return bullet;
 };
+
 BulletFactory.prototype._getBulletPosition = function (tank) {
     var x, y;
     var direction = tank.getDirection();
