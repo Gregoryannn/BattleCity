@@ -5,7 +5,6 @@ function Pause(eventManager) {
     this._blinkTimer = new BlinkTimer(12);
     this._active = true;
 }
-
 Pause.Event = {};
 Pause.Event.START = 'Pause.Event.START';
 Pause.Event.END = 'Pause.Event.END';
@@ -14,7 +13,6 @@ Pause.prototype.notify = function (event) {
         this.keyPressed(event.key);
     }
 };
-
 Pause.prototype.keyPressed = function (key) {
     if (!this._active) {
         return;
@@ -23,6 +21,7 @@ Pause.prototype.keyPressed = function (key) {
         this._pause = !this._pause;
 
         if (this._pause) {
+            SoundManager.play("pause");
             this._eventManager.fireEvent({ 'name': Pause.Event.START });
         }
         else {
@@ -43,7 +42,6 @@ Pause.prototype.draw = function (ctx) {
     ctx.fillStyle = "#e44437";
     ctx.fillText("PAUSE", 202, 240);
 };
-
 Pause.prototype.setActive = function (active) {
     this._active = active;
 };
