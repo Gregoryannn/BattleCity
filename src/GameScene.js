@@ -1,6 +1,5 @@
 function GameScene(sceneManager, stage, player) {
     var self = this;
-
     this._sceneManager = sceneManager;
     this._curtain = new Curtain();
     this._stage = stage === undefined ? 1 : stage;
@@ -16,8 +15,15 @@ function GameScene(sceneManager, stage, player) {
             }
         }
     });
-    this._script.enqueue({ execute: function () { self._stageMessage.show(); } });
-    this._script.enqueue(new Delay(this._script, 50));
+
+
+    this._script.enqueue({
+        execute: function () {
+            self._stageMessage.show();
+            SoundManager.play("stage_start");
+        }
+    });
+    this._script.enqueue(new Delay(this._script, 60));
     this._script.enqueue({
         execute: function () {
             self._stageMessage.hide();
