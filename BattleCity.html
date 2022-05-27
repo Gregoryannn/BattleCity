@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-          "http://www.w3.org/TR/html4/loose.dtd">
+  "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+
 <head>
     <title>Battle City</title>
 
@@ -92,11 +93,12 @@
     <script type="text/javascript" src="src/Stages.js"></script>
     <script type="text/javascript" src="src/MoveFn.js"></script>
     <script type="text/javascript" src="src/GameOverMessage.js"></script>
+    <script type="text/javascript" src="src/StageStatisticsScene.js"></script>
+    <script type="text/javascript" src="src/GameOverScene.js"></script>
     <script type="text/javascript" src="src/Player.js"></script>
     <script type="text/javascript" src="src/StageStatisticsPoints.js"></script>
     <script type="text/javascript" src="src/Trees.js"></script>
-
-
+    <script type="text/javascript" src="src/Water.js"></script>
 
     <script type="text/javascript" src="lib/Stats.js"></script>
     <script type="text/javascript" src="src/FPSCounter.js"></script>
@@ -106,7 +108,7 @@
     <script type="text/javascript" src="src/SpriteSerializerController.js"></script>
     <script type="text/javascript" src="src/SpriteSerializer.js"></script>
     <script type="text/javascript">
-        $(function () {
+        $(function() {
             var FPS = 50;
             var fpsCounter = new FPSCounter();
 
@@ -127,7 +129,6 @@
                 keyboard.fireEvents();
                 sceneManager.update();
 
-                clearCanvas();
                 sceneManager.draw(ctx);
 
                 fpsCounter.end();
@@ -138,14 +139,11 @@
                 var canvas = document.getElementById(CANVAS_ID);
                 return canvas.getContext('2d');
             };
-
-            function clearCanvas() {
-                ctx.fillStyle = "#808080";
-                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            };
         });
     </script>
 </head>
+
 <body>
 </body>
+
 </html>

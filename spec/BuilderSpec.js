@@ -1,14 +1,13 @@
-describe("Builder", function () {
-    it("should subscribe", function () {
+describe("Builder", function() {
+    it("should subscribe", function() {
         var eventManager = new EventManager();
         spyOn(eventManager, 'addSubscriber');
         var builder = new Builder(eventManager);
-        expect(eventManager.addSubscriber).toHaveBeenCalledWith(builder,
-            [Cursor.Event.BUILD, Cursor.Event.MOVED]);
+        expect(eventManager.addSubscriber).toHaveBeenCalledWith(builder, [Cursor.Event.BUILD, Cursor.Event.MOVED]);
     });
 
-    describe("#notify", function () {
-        it("build", function () {
+    describe("#notify", function() {
+        it("build", function() {
             var eventManager = new EventManager();
             var builder = new Builder(eventManager);
             spyOn(builder, 'build');
@@ -18,16 +17,16 @@ describe("Builder", function () {
         });
     });
 
-    describe("#build", function () {
+    describe("#build", function() {
         var eventManager, builder, cursor;
 
-        beforeEach(function () {
+        beforeEach(function() {
             eventManager = new EventManager();
             builder = new Builder(eventManager);
             cursor = new Cursor(eventManager);
         });
 
-        it("should call appropriate build function", function () {
+        it("should call appropriate build function", function() {
             spyOn(builder, 'buildBrickWallRight');
             spyOn(builder, 'buildBrickWallBottom');
             spyOn(builder, 'buildBrickWallLeft');
@@ -40,6 +39,7 @@ describe("Builder", function () {
             spyOn(builder, 'buildSteelWallTop');
             spyOn(builder, 'buildSteelWallFull');
 
+            spyOn(builder, 'buildWater');
             spyOn(builder, 'buildTrees');
 
             spyOn(builder, 'clear');
@@ -85,6 +85,10 @@ describe("Builder", function () {
             builder.buildSteelWallFull.reset();
 
             builder.build(cursor);
+            expect(builder.buildWater).toHaveBeenCalledWith(cursor.getPosition());
+            builder.buildWater.reset();
+
+            builder.build(cursor);
             expect(builder.buildTrees).toHaveBeenCalledWith(cursor.getPosition());
             builder.buildTrees.reset();
 
@@ -93,7 +97,7 @@ describe("Builder", function () {
             builder.clear.reset();
         });
 
-        it("if cursor has moved, build last structure on the new spot", function () {
+        it("if cursor has moved, build last structure on the new spot", function() {
             spyOn(builder, 'buildBrickWallRight');
 
             builder.build(cursor);
@@ -107,7 +111,7 @@ describe("Builder", function () {
             expect(builder.buildBrickWallRight).toHaveBeenCalled();
         });
 
-        it("should fire event", function () {
+        it("should fire event", function() {
             spyOn(eventManager, 'fireEvent');
             builder.setStructure(Builder.Structure.BRICK_WALL_RIGHT);
             builder.build(cursor);
@@ -119,40 +123,40 @@ describe("Builder", function () {
         });
     });
 
-    describe("build functions", function () {
+    describe("build functions", function() {
         var eventManager, builder;
 
-        beforeEach(function () {
+        beforeEach(function() {
             eventManager = new EventManager();
             builder = new Builder(eventManager);
             builder.setTileSize(4);
         });
 
-        it("#buildBrickWallRight", function () {
+        it("#buildBrickWallRight", function() {
             var parts = builder.buildBrickWallRight(new Point(2, 3));
             expect(parts[0] instanceof BrickWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(6, 3))
             expect(parts[1].getPosition()).toEqual(new Point(6, 7))
         });
-        it("#buildBrickWallBottom", function () {
+        it("#buildBrickWallBottom", function() {
             var parts = builder.buildBrickWallBottom(new Point(2, 3));
             expect(parts[0] instanceof BrickWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(2, 7))
             expect(parts[1].getPosition()).toEqual(new Point(6, 7))
         });
-        it("#buildBrickWallLeft", function () {
+        it("#buildBrickWallLeft", function() {
             var parts = builder.buildBrickWallLeft(new Point(2, 3));
             expect(parts[0] instanceof BrickWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(2, 3))
             expect(parts[1].getPosition()).toEqual(new Point(2, 7))
         });
-        it("#buildBrickWallTop", function () {
+        it("#buildBrickWallTop", function() {
             var parts = builder.buildBrickWallTop(new Point(2, 3));
             expect(parts[0] instanceof BrickWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(2, 3))
             expect(parts[1].getPosition()).toEqual(new Point(6, 3))
         });
-        it("#buildBrickWallFull", function () {
+        it("#buildBrickWallFull", function() {
             var parts = builder.buildBrickWallFull(new Point(2, 3));
             expect(parts[0] instanceof BrickWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(2, 3))
@@ -161,35 +165,35 @@ describe("Builder", function () {
             expect(parts[3].getPosition()).toEqual(new Point(6, 7))
         });
 
-        it("#buildSteelWallRight", function () {
+        it("#buildSteelWallRight", function() {
             var parts = builder.buildSteelWallRight(new Point(2, 3));
             expect(parts[0] instanceof SteelWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(6, 3))
             expect(parts[1].getPosition()).toEqual(new Point(6, 7))
         });
 
-        it("#buildSteelWallRight", function () {
+        it("#buildSteelWallRight", function() {
             var parts = builder.buildSteelWallBottom(new Point(2, 3));
             expect(parts[0] instanceof SteelWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(2, 7))
             expect(parts[1].getPosition()).toEqual(new Point(6, 7))
         });
 
-        it("#buildSteelWallLeft", function () {
+        it("#buildSteelWallLeft", function() {
             var parts = builder.buildSteelWallLeft(new Point(2, 3));
             expect(parts[0] instanceof SteelWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(2, 3))
             expect(parts[1].getPosition()).toEqual(new Point(2, 7))
         });
 
-        it("#buildSteelWallTop", function () {
+        it("#buildSteelWallTop", function() {
             var parts = builder.buildSteelWallTop(new Point(2, 3));
             expect(parts[0] instanceof SteelWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(2, 3))
             expect(parts[1].getPosition()).toEqual(new Point(6, 3))
         });
 
-        it("#buildSteelWallFull", function () {
+        it("#buildSteelWallFull", function() {
             var parts = builder.buildSteelWallFull(new Point(2, 3));
             expect(parts[0] instanceof SteelWall).toBeTruthy();
             expect(parts[0].getPosition()).toEqual(new Point(2, 3))
@@ -198,7 +202,14 @@ describe("Builder", function () {
             expect(parts[3].getPosition()).toEqual(new Point(6, 7))
         });
 
-        it("#buildTrees", function () {
+        it("#buildWater", function() {
+            var parts = builder.buildWater(new Point(2, 3));
+            var water = parts[0];
+            expect(water instanceof Water).toBeTruthy();
+            expect(water.getPosition()).toEqual(new Point(2, 3))
+        });
+
+        it("#buildTrees", function() {
             var parts = builder.buildTrees(new Point(2, 3));
             var trees = parts[0];
             expect(trees instanceof Trees).toBeTruthy();
