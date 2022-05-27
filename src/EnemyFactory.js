@@ -52,23 +52,19 @@ EnemyFactory.prototype.create = function() {
     this._timer = 0;
     this.createNextEnemy();
 };
-
 EnemyFactory.prototype.setInterval = function(interval) {
     this._interval = interval;
     this._timer = this._interval;
 };
-
 EnemyFactory.prototype.setFlashingTanks = function(tanks) {
     this._flashingTanks = tanks;
 };
-
 EnemyFactory.prototype.createNextEnemy = function() {
     var tank = this.createEnemy(this.getNextEnemy(), this.getNextPosition());
     this.nextEnemy();
     this.nextPosition();
     return tank;
 };
-
 EnemyFactory.prototype.createEnemy = function(type, position) {
     var tank = new Tank(this._eventManager);
     tank.makeEnemy();
@@ -120,8 +116,9 @@ EnemyFactory.prototype.getEnemyCount = function() {
 EnemyFactory.prototype.getEnemiesToCreateCount = function() {
     return this._enemies.length - this._enemy;
 };
+
 EnemyFactory.prototype.notify = function(event) {
-    if (event.name == Points.Event.DESTROYED) {
+    if (event.name == Points.Event.DESTROYED && event.points.getType() == Points.Type.TANK) {
         this._enemyCount--;
     } else if (event.name == TankExplosion.Event.DESTROYED) {
         if (event.explosion.getTank().isEnemy() && this.getEnemiesToCreateCount() == 0) {

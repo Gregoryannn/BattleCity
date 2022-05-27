@@ -145,11 +145,9 @@ describe("EnemyFactory", function() {
             var factory = new EnemyFactory(eventManager);
             var enemy = Tank.Type.BASIC;
             var position = new Point(1, 2);
-
             expect(factory.getEnemyCount()).toEqual(0);
             var tank = factory.createEnemy(enemy, position);
             expect(factory.getEnemyCount()).toEqual(1);
-
             expect(tank instanceof Tank).toBeTruthy();
             expect(tank.getType()).toEqual(enemy);
             expect(tank.getPosition()).toEqual(position);
@@ -195,6 +193,7 @@ describe("EnemyFactory", function() {
             expect(factory.getEnemyCount()).toEqual(1);
 
             var points = new Points(eventManager);
+            points.setType(Points.Type.TANK);
             factory.notify({ 'name': Points.Event.DESTROYED, 'points': points });
 
             expect(factory.getEnemyCount()).toEqual(0);
