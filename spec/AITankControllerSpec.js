@@ -22,14 +22,18 @@ describe("AITankController", function () {
         expect(tank.toNormalSpeed).toHaveBeenCalled();
     });
 });
+
 describe("AITankController", function () {
-    var eventManager, tank, random, controller;
+    var eventManager, tank, random, spriteContainer, base, controller;
 
     beforeEach(function () {
         eventManager = new EventManager();
         tank = new Tank(eventManager);
         random = new Random();
-        controller = new AITankController(tank, random);
+        spriteContainer = new SpriteContainer(eventManager);
+        base = new Base(eventManager);
+        spyOn(spriteContainer, 'getBase').andReturn(base);
+        controller = new AITankController(tank, random, spriteContainer);
     });
 
     describe("#updateShoot", function () {
@@ -150,64 +154,64 @@ describe("AITankController", function () {
         });
     });
 
-        describe("#update", function () {
-            it("normal", function () {
-                spyOn(controller, 'updateShoot');
-                spyOn(controller, 'updateDirection');
-                controller.update();
-                expect(controller.updateShoot).toHaveBeenCalled();
-                expect(controller.updateDirection).toHaveBeenCalled();
-            });
-
-            it("pause", function () {
-                spyOn(controller, 'updateShoot');
-                spyOn(controller, 'updateDirection');
-                eventManager.fireEvent({ 'name': Pause.Event.START });
-                controller.update();
-                expect(controller.updateShoot).not.toHaveBeenCalled();
-                expect(controller.updateDirection).not.toHaveBeenCalled();
-            });
-
-            it("freeze", function () {
-                spyOn(controller, 'updateShoot');
-                spyOn(controller, 'updateDirection');
-                controller.freeze();
-                controller.update();
-                expect(controller.updateShoot).not.toHaveBeenCalled();
-                expect(controller.updateDirection).not.toHaveBeenCalled();
-            });
+    describe("#update", function () {
+        it("normal", function () {
+            spyOn(controller, 'updateShoot');
+            spyOn(controller, 'updateDirection');
+            controller.update();
+            expect(controller.updateShoot).toHaveBeenCalled();
+            expect(controller.updateDirection).toHaveBeenCalled();
         });
 
-        describe("#notify", function () {
-            it("Tank.Event.DESTROYED", function () {
-                spyOn(controller, 'destroy');
-                controller.notify({ 'name': Tank.Event.DESTROYED, 'tank': tank });
-                expect(controller.destroy).toHaveBeenCalled();
-            });
-
-            it("PowerUpHandler.Event.FREEZE", function () {
-                controller.notify({ 'name': PowerUpHandler.Event.FREEZE });
-                expect(controller.isFreezed()).toBeTruthy();
-                expect(tank.getSpeed()).toEqual(0);
-            });
-
-            it("FreezeTimer.Event.UNFREEZE", function () {
-                controller.freeze();
-                controller.notify({ 'name': FreezeTimer.Event.UNFREEZE });
-                expect(controller.isFreezed()).toBeFalsy();
-                expect(tank.getSpeed()).toEqual(tank.getNormalSpeed());
-            });
+        it("pause", function () {
+            spyOn(controller, 'updateShoot');
+            spyOn(controller, 'updateDirection');
+            eventManager.fireEvent({ 'name': Pause.Event.START });
+            controller.update();
+            expect(controller.updateShoot).not.toHaveBeenCalled();
+            expect(controller.updateDirection).not.toHaveBeenCalled();
         });
 
-        it("#destroy", function () {
-            spyOn(eventManager, 'fireEvent');
-            spyOn(eventManager, 'removeSubscriber');
-            var pauseListener = new PauseListener(eventManager);
-            spyOn(pauseListener, 'destroy');
-            controller.setPauseListener(pauseListener);
-            controller.destroy();
-            expect(eventManager.removeSubscriber).toHaveBeenCalledWith(controller);
-            expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': AITankController.Event.DESTROYED, 'controller': controller });
-            expect(pauseListener.destroy).toHaveBeenCalled();
+        it("freeze", function () {
+            spyOn(controller, 'updateShoot');
+            spyOn(controller, 'updateDirection');
+            controller.freeze();
+            controller.update();
+            expect(controller.updateShoot).not.toHaveBeenCalled();
+            expect(controller.updateDirection).not.toHaveBeenCalled();
         });
     });
+
+    describe("#notify", function () {
+        it("Tank.Event.DESTROYED", function () {
+            spyOn(controller, 'destroy');
+            controller.notify({ 'name': Tank.Event.DESTROYED, 'tank': tank });
+            expect(controller.destroy).toHaveBeenCalled();
+        });
+
+        it("PowerUpHandler.Event.FREEZE", function () {
+            controller.notify({ 'name': PowerUpHandler.Event.FREEZE });
+            expect(controller.isFreezed()).toBeTruthy();
+            expect(tank.getSpeed()).toEqual(0);
+        });
+
+        it("FreezeTimer.Event.UNFREEZE", function () {
+            controller.freeze();
+            controller.notify({ 'name': FreezeTimer.Event.UNFREEZE });
+            expect(controller.isFreezed()).toBeFalsy();
+            expect(tank.getSpeed()).toEqual(tank.getNormalSpeed());
+        });
+    });
+
+    it("#destroy", function () {
+        spyOn(eventManager, 'fireEvent');
+        spyOn(eventManager, 'removeSubscriber');
+        var pauseListener = new PauseListener(eventManager);
+        spyOn(pauseListener, 'destroy');
+        controller.setPauseListener(pauseListener);
+        controller.destroy();
+        expect(eventManager.removeSubscriber).toHaveBeenCalledWith(controller);
+        expect(eventManager.fireEvent).toHaveBeenCalledWith({ 'name': AITankController.Event.DESTROYED, 'controller': controller });
+        expect(pauseListener.destroy).toHaveBeenCalled();
+    });
+});

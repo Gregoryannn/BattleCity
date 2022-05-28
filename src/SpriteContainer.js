@@ -21,11 +21,19 @@ SpriteContainer.prototype.getEnemyTanks = function () {
         return sprite instanceof Tank && sprite.isEnemy();
     });
 };
-
 SpriteContainer.prototype.getWalls = function () {
     return this._sprites.filter(function (sprite) {
         return sprite instanceof Wall;
     });
+};
+
+SpriteContainer.prototype.getBase = function () {
+    for (var i = 0; i < this._sprites.length; ++i) {
+        if (this._sprites[i] instanceof Base) {
+            return this._sprites[i];
+        }
+    }
+    return null;
 };
 
 SpriteContainer.prototype.notify = function (event) {
