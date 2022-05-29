@@ -1,4 +1,4 @@
-var ImageManager = (function() {
+var ImageManager = (function () {
     var images = {
         tank_player1_down_c0_t1: null,
         tank_player1_down_c0_t2: null,
@@ -184,15 +184,22 @@ var ImageManager = (function() {
         game_over: null,
     };
 
+    var imagesCount = Object.size(images);;
+    var imagesLoaded = 0;
+
     for (var i in images) {
         var img = new Image();
         img.src = 'images/' + i + '.png';
+        img.onload = function () { ++imagesLoaded; };
         images[i] = img;
     }
 
     return {
-        getImage: function(name) {
+        getImage: function (name) {
             return images[name];
+        },
+        getLoadingProgress: function () {
+            return Math.floor((imagesLoaded / imagesCount) * 100);
         }
     };
 })();

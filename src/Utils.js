@@ -4,6 +4,16 @@ Function.prototype.subclass = function (base) {
     this.prototype = new c();
 };
 Function.prototype.subclass.nonconstructor = function () { };
+
+// Get the size of an object
+Object.size = function (obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
 function arrayContains(arr, obj) {
     for (var i = 0; i < arr.length; ++i) {
         if (arr[i] === obj) {
@@ -22,7 +32,6 @@ function arrayRemove(arr, obj) {
 function arrayRandomElement(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
-
 String.prototype.lpad = function (padString, length) {
     var str = this;
     while (str.length < length)

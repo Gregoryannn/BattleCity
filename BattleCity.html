@@ -6,7 +6,6 @@
 
     <link rel="stylesheet" type="text/css" href="css/BattleCity.css" />
 
-
     <script type="text/javascript" src="lib/jquery-1.7.2.js"></script>
     <script type="text/javascript" src="src/Utils.js"></script>
     <script type="text/javascript" src="src/Point.js"></script>
@@ -94,6 +93,7 @@
     <script type="text/javascript" src="src/StageStatisticsPoints.js"></script>
     <script type="text/javascript" src="src/Trees.js"></script>
     <script type="text/javascript" src="src/Water.js"></script>
+    <script type="text/javascript" src="src/LoadingScene.js"></script>
 
     <script type="text/javascript" src="lib/Stats.js"></script>
     <script type="text/javascript" src="src/FPSCounter.js"></script>
@@ -103,7 +103,6 @@
     <script type="text/javascript" src="src/SpriteSerializerController.js"></script>
     <script type="text/javascript" src="src/SpriteSerializer.js"></script>
     <script type="text/javascript" src="src/SoundManager.js"></script>
-
     <script type="text/javascript">
         $(function () {
             var FPS = 50;
@@ -116,16 +115,13 @@
             var keyboard = new Keyboard(eventManager);
             var sceneManager = new SceneManager(eventManager);
             sceneManager.toMainMenuScene();
+            sceneManager.toLoadingScene();
 
             setInterval(gameLoop, 1000 / FPS);
 
             function gameLoop() {
-
                 keyboard.fireEvents();
-                sceneManager.update();
-
                 sceneManager.draw(ctx);
-
             }
 
             function createCanvasContext() {

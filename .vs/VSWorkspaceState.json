@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\css"
+    "\\css",
+    "\\spec",
+    "\\src"
   ],
-  "SelectedNode": "\\css\\BattleCity.css",
+  "SelectedNode": "\\src\\SpriteContainer.js",
   "PreviewInSolutionExplorer": false
 }

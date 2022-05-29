@@ -8,6 +8,12 @@ SceneManager.prototype.setScene = function (scene) {
 SceneManager.prototype.getScene = function () {
     return this._scene;
 };
+
+SceneManager.prototype.toLoadingScene = function () {
+    this._eventManager.removeAllSubscribers();
+    this._scene = new LoadingScene(this);
+};
+
 SceneManager.prototype.toMainMenuScene = function (arrived) {
     this._eventManager.removeAllSubscribers();
     this._scene = new MainMenuScene(this);
@@ -17,34 +23,28 @@ SceneManager.prototype.toMainMenuScene = function (arrived) {
         this._scene.arrived();
     }
 };
-
-SceneManager.prototype.toGameScene = function () {
-    SceneManager.prototype.toGameScene = function (stage, player) {
-        this._eventManager.removeAllSubscribers();
-        this._scene = new GameScene(this);
-        this._scene = new GameScene(this, stage, player);
-    };
-
-    SceneManager.prototype.toConstructionScene = function () {
-        this._eventManager.removeAllSubscribers();
-        this._scene = new Construction(this);
-    };
-
-        SceneManager.prototype.toStageStatisticsScene = function (stage, player, gameOver) {
-            this._eventManager.removeAllSubscribers();
-            this._scene = new StageStatisticsScene(this, stage, player, gameOver);
-        };
-
-        SceneManager.prototype.toGameOverScene = function () {
-            this._eventManager.removeAllSubscribers();
-            this._scene = new GameOverScene(this);
-        };
-        SceneManager.prototype.update = function () {
-            this._scene.update();
-        };
-        SceneManager.prototype.draw = function (ctx) {
-            this._scene.draw(ctx);
-        };
-        SceneManager.prototype.getEventManager = function () {
-            return this._eventManager;
-        };
+SceneManager.prototype.toGameScene = function (stage, player) {
+    this._eventManager.removeAllSubscribers();
+    this._scene = new GameScene(this, stage, player);
+};
+SceneManager.prototype.toConstructionScene = function () {
+    this._eventManager.removeAllSubscribers();
+    this._scene = new Construction(this);
+};
+SceneManager.prototype.toStageStatisticsScene = function (stage, player, gameOver) {
+    this._eventManager.removeAllSubscribers();
+    this._scene = new StageStatisticsScene(this, stage, player, gameOver);
+};
+SceneManager.prototype.toGameOverScene = function () {
+    this._eventManager.removeAllSubscribers();
+    this._scene = new GameOverScene(this);
+};
+SceneManager.prototype.update = function () {
+    this._scene.update();
+};
+SceneManager.prototype.draw = function (ctx) {
+    this._scene.draw(ctx);
+};
+SceneManager.prototype.getEventManager = function () {
+    return this._eventManager;
+};
